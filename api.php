@@ -13,6 +13,19 @@ The employer can submit a request to find a new coder.
 */
 
 
+/*
+TODO:
+Implement url security, webrequest security, tokens for authentications.
+Implement SSL.
+Implement file access security so that the uploaded file links are only accessible by users who are logged in and who have permission to access the file.
+
+Implement Database semaphores for atomic operations.
+
+Encryption of passwords
+
+Implement Mysql injection proof queries
+*/
+
 
 //*********Authentication START****************
 /*
@@ -46,11 +59,31 @@ Description: Logs the user out if any user is logged in. If no user is logged in
 /*
 sendMessage($toEmail,$msg)
 Permission: Coder, Employer, Admin
+Description: Connected Coder and employer can send msg to each other. Any coder and employer can send msgs to admin, and admin can send msgs to any coder or employer. Admin's email is always my personal email address. Function returns a msg ID on success, or false otherwise.
 
 sendFile($toEmail)
-sendMessageToAdmin($msg)
-sendFileToAdmin()
+Permission: Coder, Employer, Admin 
+Description: Similar to sendMessage but with files. Function returns a file ID as well as a file link on success, or false otherwise.
 
+forwardFile($toEmail,$fileId)
+Permission: Coder, Employer, Admin
+Description: Any file that a user receives from others, he can forward to someone else. Return true or false.
+
+forwardMessage($toEmail,$msgId)
+Permission: Coder, Employer, Admin
+Description: Any msg that a user receives from others, he can forward to someone else. Return true or false.
+
+retrieveMessages($fromEmail,$startIndex)
+Permission: Coder, Employer, Admin
+Description: Retrieves a list of 20 msgs received from a sender starting from $startIndex arranged in decreasing order with respect to date.
+
+retrieveFiles($fromEmail,$startIndex)
+Permission: Coder, Employer, Admin
+Description: Retrieves a list of 20 files' links received from a sender starting from $startIndex arranged in decreasing order with respect to date.
+
+retrieveConnections($startIndex)
+Permission: Coder, Employer, Admin
+Description: Retrieves 20 connections of the currently logged in user starting from $startIndex. 
 */
 //*********Messaging END****************
 
