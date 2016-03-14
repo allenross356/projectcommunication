@@ -24,6 +24,14 @@ Users can mark notifications, msgs and files as seen or unseen. (Covered,)
 Email of the user is verified.
 
 User can change the email and password. User can request password if he forgets. User can add multiple contact informations including emails.
+
+User can check his transactions history.
+
+Admin will be able to reset the budget to reduce the paid amounts. (Covered,) 
+
+Admin can see if a coder is there online to entertain the client. If yes, the admin can ask the coder if he is available to talk to client immediately. If yes, the admin can connect the client and coder both so that they will be able to talk to each other.
+
+
 */
 
 
@@ -216,6 +224,10 @@ Description: Admin puts the amount in the coder's account which the coder can re
 chargeCoder($coderEmail,$amount)
 Permission: Admin
 Description: Admin can charge the coder from his account reducing his account's balance. The balance can go in negative as well.
+
+resetBudget($employerEmail,$coderEmail)
+Permission: Admin
+Description: The budget of employer and admin will be reset. Which means that the employer paid amount and the admin paid amount will be subtracted from the employer budget amount and the admin budget amount respectively to reduce the figures.
 */
 //*********Payments END****************
 
@@ -307,14 +319,15 @@ Description: The client app can request the list of 20 notifications of the logg
 //***************************************************** DATABASE *****************************************************
 //Database Name: projectcommunication
 //*********Users START****************
-/*
 //Table Name:	pc_users
+/*
 user id (u_id)
 full name (u_name)
 email (u_email)
 password (u_pass)
 date time (u_creation_dt): Date-time of the account creation.
 is email verified (u_emailverified): Boolean. Denotes if the email is verified.
+account balance (u_balance): Account balance of the user.
 */
 //*********Users END****************
 
@@ -322,12 +335,13 @@ is email verified (u_emailverified): Boolean. Denotes if the email is verified.
 
 
 //*********Sessions START****************
+//Table Name: pc_sessions
 /*
-session id
-email
-token
-creation date time
-expire date time
+session id (s_id)
+email (s_email)
+token (s_token)
+creation date time (s_creation_dt)
+expire date time (s_expiration_dt)
 */
 //*********Users END****************
 
@@ -336,10 +350,15 @@ expire date time
 
 
 //*********Connections START****************
+//Table Name: pc_connections
 /*
-connection id
-user 1 email
-user 2 email
+connection id (c_id)
+coder email (c_coderemail)
+employer email (c_employeremail)
+employer budget
+admin budget
+employer paid so far
+admin paid so far
 */
 //*********Connections END****************
 
@@ -347,15 +366,18 @@ user 2 email
 
 
 
+
+
 //*********Messages START****************
+//Table Name: pc_messages
 /*
-message id
-from email
-to email
-message 				:	String
-is forwarded			:	Boolean
-forwarded message id	
-date time
+message id (m_id)
+from email (m_fromemail)
+to email (m_toemail)
+message (m_msg)
+is forwarded (m_isforwarded):	Boolean. Denotes if the msg is forwarded.
+forwarded message id (m_forwardid):	Same as m_id. Null if m_isforwarded is false, otherwise contains an m_id.
+date time (m_creation_dt):	Date-time of creation of msg.
 */
 //*********Messages END****************
 
@@ -363,6 +385,57 @@ date time
 
 
 //*********Files START****************
+//Table Name: pc_files
+/*
+file id (f_id)
+from email (f_fromemail)
+to email (f_toemail)
+file link (f_filelink)
+is forwarded (f_isforwarded)
+forwarded file id (f_forwardid)
+date time (f_creation_dt)
+*/
+//*********Files END****************
+
+
+
+
+
+
+//*********Notifications START****************
+//Table Name: pc_notifications
+/*
+notification id (n_id)
+to email (n_email)
+type (n_type): Type of notification. (i) Request of <TODO>
+msg (n_msg)
+date time (n_creation_dt)
+*/
+//*********Notifications END****************
+
+
+
+
+
+//*********Transactions START****************
+//
+/*
+transaction id
+from email
+to email
+file link				:	String
+is forwarded			:	Boolean
+forwarded file id	
+date time
+*/
+//*********Transactions END****************
+
+
+
+
+
+
+//*********Transactions START****************
 /*
 file id
 from email
@@ -372,7 +445,8 @@ is forwarded			:	Boolean
 forwarded file id	
 date time
 */
-//*********Files END****************
+//*********Transactions END****************
+
 
 
 
