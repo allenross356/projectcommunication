@@ -9,9 +9,14 @@ The software will ask the user to log in. The software will know which user is c
 
 The coder will be able to leave a request for admin to collect payments from the client in order to secure funds for himself. When the request is submitted, the admin will be notified. Admin can mark the payment complete whenever he wants to, or mark it denied.
 
+Coder can request admin to increase the price of the project.
+
+Coder can request payment withdrawal.
+
 The employer can submit a request to find a new coder. 
 
 Coder and employer can report each other, and they can call admin to interject for some problem.
+
 */
 
 
@@ -116,7 +121,50 @@ Description: Retrieves 20 connections of the currently logged in user starting f
 
 //*********Payments START****************
 /*
+setEmployerBudget($employerEmail,$coderEmail,$budget)
+Permission: Admin
+Description: The admin will set the employer's total budget for all his projects assigned to 1 particular coder. This budget won't be visible to coder. This is only for the purpose of the admin. This budget will be visible to employer and admin only.
 
+setAdminBudget($employerEmail,$coderEmail,$budget)
+Permission: Admin
+Description: The admin will set the budget that the coder will get paid for completing the particular employer's projects. This budget will be visible to coder and admin but not employer. 
+
+addEmployerBudget($employerEmail,$coderEmail,$budget)
+Permission: Admin
+Description: The admin will add additional budget of the employer in scenarios when employer provides additional work or increases his budget.
+
+addAdminBudget($employerEmail,$coderEmail,$budget)
+Permission: Admin
+Description: The admin will add additional budget for the coder to finish the work of a particular employer in required.
+
+reduceAdminBudget($employerEmail,$coderEmail,$budget)
+Permission: Admin
+Description: Similar to addAdminBudget, but reduce instead of by increase.
+
+reduceEmployerBudget($employerEmail,$coderEmail,$budget)
+Permission: Admin
+Description: Similar to addEmployerBudget, but reduce instead of by increase.
+
+setSecuredFunds($employerEmail,$coderEmail,$percentage)
+Permission: Admin
+Description:
+
+addSecuredFunds($employerEmail,$coderEmail,$percentage)
+Permission: Admin
+Description:
+
+coderNotifiesPaymentCollection($employerEmail,$percentage)
+Description:
+
+coderRequestsWithdrawal($coderEmail,$amount)
+Description:
+
+adminConfirmsWithdrawal($withdrawalRequestId)
+Description:
+
+adminConfirmsPaymentCollection($coderEmail,$employerEmail,$percentage)
+
+adminDeniesPaymentCollection($coderEmail,$employerEmail)
 */
 //*********Payments END****************
 
@@ -153,8 +201,10 @@ Description: Unconnects a coder and employer, so that they won't be able to comm
 
 //*********GUI START****************
 /*
-getEmployerConnections($employerEmail)
-getCoderConnections($coderEmail)
+getConnections()
+
+getNotifications()
+
 */
 //*********GUI START****************
 
