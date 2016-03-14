@@ -31,7 +31,7 @@ Admin will be able to reset the budget to reduce the paid amounts. (Covered,)
 
 Admin can see if a coder is there online to entertain the client. If yes, the admin can ask the coder if he is available to talk to client immediately. If yes, the admin can connect the client and coder both so that they will be able to talk to each other.
 
-
+Admin can forward all the previous msgs and files between a previous coder and client to new coder. The interface is made so that its easy for admin to deselect a few msgs or files that he doesn't want to foward the new coder.
 */
 
 
@@ -325,6 +325,7 @@ user id (u_id)
 full name (u_name)
 email (u_email)
 password (u_pass)
+type (u_type): User type can be: (i) coder, (ii) employer, (iii) admin
 date time (u_creation_dt): Date-time of the account creation.
 is email verified (u_emailverified): Boolean. Denotes if the email is verified.
 account balance (u_balance): Account balance of the user.
@@ -418,7 +419,7 @@ date time (n_creation_dt)
 
 
 //*********Transactions START****************
-//
+// <TODO>
 /*
 transaction id
 from email
@@ -434,18 +435,7 @@ date time
 
 
 
-
-//*********Transactions START****************
-/*
-file id
-from email
-to email
-file link				:	String
-is forwarded			:	Boolean
-forwarded file id	
-date time
-*/
-//*********Transactions END****************
+ 
 
 
 
@@ -454,7 +444,64 @@ date time
 //***************************************************** DEFINITION *****************************************************
 
 //*********Messaging START****************
-function 
+function canCommunicate($toEmail)
+{
+	$gf=getDatabaseConnection();	if(isMySqlError($gf)) return $gf;
+	$userEmail=getLoggedInUser();	if(isMySqlError($userEmail)) return $userEmail;
+	$userType=getUserType($email);	if(isMySqlError($userType)) return $userType;	
+	//<TODO> implement the function getUserType
+	$toType=getUserType($toEmail);	if(isMySqlError($toType)) return $toType;
+	if($toType=="admin" || $userType=="admin") return true;
+	if($userType==$toType) return false;
+	if($userType=="employer") swap($userEmail,$toEmail);
+	$r=$gf->query("select * from pc_connections where c_coderemail='$userEmail' and c_employeremail='$toEmail'");
+	if($r->)
+}
+
+
+sendMessage($toEmail,$msg)
+Permission: Coder, Employer, Admin
+Description: Connected Coder and employer can send msg to each other. Any coder and employer can send msgs to admin, and admin can send msgs to any coder or employer. Admin's email is always my personal email address. Function returns a msg ID on success, or false otherwise.
+
+sendFile($toEmail)
+Permission: Coder, Employer, Admin 
+Description: Similar to sendMessage but with files. Function returns a file ID as well as a file link on success, or false otherwise.
+
+forwardFile($toEmail,$fileId)
+Permission: Coder, Employer, Admin
+Description: Any file that a user receives from others, he can forward to someone else. Return true or false.
+
+forwardMessage($toEmail,$msgId)
+Permission: Coder, Employer, Admin
+Description: Any msg that a user receives from others, he can forward to someone else. Return true or false.
+
+markMsgSeen($msgId)
+Permission: Receiver of msg (Admin, Coder, Employer)
+Description: Receiver of the msg can manually mark the msg as seen. However, the msg will be marked as seen automatically when its displayed to the receiver.
+
+markMsgUnseen($msgId)
+Permission: Receiver of msg (Admin, Coder, Employer)
+Description: Receiver of the msg can manually mark the msg as unseen.
+
+markFileSeen($msgId)
+Permission: Receiver of file (Admin, Coder, Employer)
+Description: Receiver of the file can manually mark the file as seen. However, the file will be marked as seen automatically when its displayed to the receiver.
+
+markFileUnseen($msgId)
+Permission: Receiver of file (Admin, Coder, Employer)
+Description: Receiver of the file can manually mark the file as unseen.
+
+retrieveMessages($fromEmail,$startIndex)
+Permission: Coder, Employer, Admin
+Description: Retrieves a list of 20 msgs received from a sender starting from $startIndex arranged in decreasing order with respect to date.
+
+retrieveFiles($fromEmail,$startIndex)
+Permission: Coder, Employer, Admin
+Description: Retrieves a list of 20 files' links received from a sender starting from $startIndex arranged in decreasing order with respect to date.
+
+retrieveConnections($startIndex)
+Permission: Coder, Employer, Admin
+Description: Retrieves 20 connections of the currently logged in user starting from $startIndex. 
 //*********Messaging END****************
 
 
