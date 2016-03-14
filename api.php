@@ -1,5 +1,7 @@
 <?php
 
+//***************************************************** STORY *****************************************************
+
 /*
 Admin can assign a coder to an employer or unassign. Once assigned, the coder and employer can communicate with each other through chat as well as offline msgs. As well files can be shared with other. Coder and employer can always send msg to admin, and admin can send msgs to coders and employers. (Covered,)
 
@@ -18,6 +20,10 @@ The employer can submit a request to find a new coder. (Covered,)
 Coder and employer can report each other, and they can call admin to interject for some problem. (Covered,)
 
 Users can mark notifications, msgs and files as seen or unseen. (Covered,)
+
+Email of the user is verified.
+
+User can change the email and password. User can request password if he forgets. User can add multiple contact informations including emails.
 */
 
 
@@ -36,6 +42,22 @@ Implement Mysql injection proof queries
 Implement Update functionality in GUI.
 */
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//***************************************************** INTERFACE *****************************************************
 
 //*********Authentication START****************
 /*
@@ -219,19 +241,6 @@ Description: Admin marks the report as taken-care-of, and leaves a remark for th
 
 
 
-//*********Coder START****************
-
-//*********Coder END****************
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -278,14 +287,14 @@ Description: Unconnects a coder and employer, so that they won't be able to comm
 
 
 
-
-
-
 //*********GUI START****************
 /*
-getConnections()
+getConnections($startIndex)
+Permission:
+Description: The client app can request the list of 20 connections of the logged in user starting from $startIndex.
 
-getNotifications()
+getNotifications($startIndex)
+Description: The client app can request the list of 20 notifications of the logged in user starting from $startIndex arranged in decreasing order by date.
 
 */
 //*********GUI START****************
@@ -295,6 +304,84 @@ getNotifications()
 
 
 
+//***************************************************** DATABASE *****************************************************
+//Database Name: projectcommunication
+//*********Users START****************
+/*
+//Table Name:	pc_users
+user id (u_id)
+full name (u_name)
+email (u_email)
+password (u_pass)
+date time (u_creation_dt): Date-time of the account creation.
+is email verified (u_emailverified): Boolean. Denotes if the email is verified.
+*/
+//*********Users END****************
+
+
+
+
+//*********Sessions START****************
+/*
+session id
+email
+token
+creation date time
+expire date time
+*/
+//*********Users END****************
+
+
+
+
+
+//*********Connections START****************
+/*
+connection id
+user 1 email
+user 2 email
+*/
+//*********Connections END****************
+
+
+
+
+
+//*********Messages START****************
+/*
+message id
+from email
+to email
+message 				:	String
+is forwarded			:	Boolean
+forwarded message id	
+date time
+*/
+//*********Messages END****************
+
+
+
+
+//*********Files START****************
+/*
+file id
+from email
+to email
+file link				:	String
+is forwarded			:	Boolean
+forwarded file id	
+date time
+*/
+//*********Files END****************
+
+
+
+
+//***************************************************** DEFINITION *****************************************************
+
+//*********Messaging START****************
+function 
+//*********Messaging END****************
 
 
 
