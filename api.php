@@ -11,7 +11,7 @@ The coder will be able to leave a request for admin to collect payments from the
 
 Coder can request admin to increase the price of the project.
 
-Coder can request payment withdrawal.
+Coder can request payment withdrawal. (Covered,)
 
 The employer can submit a request to find a new coder. 
 
@@ -121,50 +121,49 @@ Description: Retrieves 20 connections of the currently logged in user starting f
 
 //*********Payments START****************
 /*
-setEmployerBudget($employerEmail,$coderEmail,$budget)
-Permission: Admin
-Description: The admin will set the employer's total budget for all his projects assigned to 1 particular coder. This budget won't be visible to coder. This is only for the purpose of the admin. This budget will be visible to employer and admin only.
-
-setAdminBudget($employerEmail,$coderEmail,$budget)
-Permission: Admin
-Description: The admin will set the budget that the coder will get paid for completing the particular employer's projects. This budget will be visible to coder and admin but not employer. 
-
-addEmployerBudget($employerEmail,$coderEmail,$budget)
-Permission: Admin
-Description: The admin will add additional budget of the employer in scenarios when employer provides additional work or increases his budget.
-
-addAdminBudget($employerEmail,$coderEmail,$budget)
-Permission: Admin
-Description: The admin will add additional budget for the coder to finish the work of a particular employer in required.
-
-reduceAdminBudget($employerEmail,$coderEmail,$budget)
-Permission: Admin
-Description: Similar to addAdminBudget, but reduce instead of by increase.
-
-reduceEmployerBudget($employerEmail,$coderEmail,$budget)
-Permission: Admin
-Description: Similar to addEmployerBudget, but reduce instead of by increase.
-
-setSecuredFunds($employerEmail,$coderEmail,$percentage)
-Permission: Admin
-Description:
-
-addSecuredFunds($employerEmail,$coderEmail,$percentage)
-Permission: Admin
-Description:
-
-coderNotifiesPaymentCollection($employerEmail,$percentage)
-Description:
-
-coderRequestsWithdrawal($coderEmail,$amount)
-Description:
-
-adminConfirmsWithdrawal($withdrawalRequestId)
-Description:
+coderNotifiesPaymentCollection($employerEmail,$percentage,$explanation)
+Permission: Coder
+Description: Coder requests admin to collect a portion of funds from client to secure them since a part of the project or entire project is completed. This amount will be displayed to the coder as secured amount along with the total secured amount.
 
 adminConfirmsPaymentCollection($coderEmail,$employerEmail,$percentage)
+Permission: Admin 
+Description: Admin confirms that a part of the payment is collected from the employer and so its secured.
 
 adminDeniesPaymentCollection($coderEmail,$employerEmail)
+Permission: Admin
+Description: Admin denies the coder the payment. The admin can reply the excuse for denying in the msgs.
+
+coderRequestsIncreaseInBudget($employerEmail,$byAmount,$explanation)
+Permission: Coder
+Description: Coder requests admin to increase the budget of the project. The admin is notified of the request.
+
+employerRequestsDecreaseInBudget($coderEmail,$byAmount,$explanation)
+Permission: Employer
+Description: Employer can request admin to decrease the budget with an explanation.
+
+adminAcceptsChangeInBudget($budgetChangeRequestId)
+Permission: Admin
+Description: Admin can accept the budget change request by the coder or employer.
+
+adminRejectsChangeInBudget($budgetChangeRequestId)
+Permission: Admin
+Description: Admin can reject the budget change request by the coder or employer.
+
+coderRequestsWithdrawal($coderEmail,$amount)
+Permission: Coder
+Description: Coder requests the admin the withdrawal from his account. Returns true if successful, or False if the amount request is greater than the balance in his account.
+
+adminConfirmsWithdrawal($withdrawalRequestId)
+Permission: Admin
+Description: Admin confirms the withdrawal after the money is sent to the coder.
+
+payCoder($coderEmail,$amount)
+Permission: Admin
+Description: Admin puts the amount in the coder's account which the coder can request to withdraw anytime.
+
+chargeCoder($coderEmail,$amount)
+Permission: Admin
+Description: Admin can charge the coder from his account reducing his account's balance. The balance can go in negative as well.
 */
 //*********Payments END****************
 
