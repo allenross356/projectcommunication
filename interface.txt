@@ -106,7 +106,7 @@ Description: User can manually mark a notification as unseen.
 
 //*********Payments START****************
 /*
-coderRequestsPaymentCollection($employerEmail,$percentage,$explanation)
+coderRequestsPaymentCollection($employerEmail,$percentage,$explanation)				[DONE]
 Permission: Coder
 Description: Coder requests admin to collect a portion of funds from client to secure them since a part of the project or entire project is completed. This amount will be displayed to the coder as secured amount along with the total secured amount.
 
@@ -118,7 +118,7 @@ adminDeniesPaymentCollection($coderEmail,$employerEmail)
 Permission: Admin
 Description: Admin denies the coder the payment. The admin can reply the excuse for denying in the msgs.
 
-coderRequestsIncreaseInBudget($employerEmail,$byAmount,$explanation)
+coderRequestsIncreaseInBudget($employerEmail,$byAmount,$explanation)				[DONE]
 Permission: Coder
 Description: Coder requests admin to increase the budget of the project. The admin is notified of the request.
 

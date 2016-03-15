@@ -45,6 +45,26 @@ function isMySqlError($x)
 
 
 
+
+//*********Request Types START****************
+function request_coder_requests_milestone()
+{
+	return "request_coder_requests_milestone";
+}
+
+function request_coder_requests_increased_budget()
+{
+	return "request_coder_requests_increased_budget";
+}
+//*********Request Types END****************
+
+
+
+
+
+
+
+
 //*********Authentication START****************
 
 //Tells whether the logged in user is admin or not.
@@ -281,25 +301,39 @@ function markNotificationUnseen($notificationId)
 
 
 //*********Payments START****************
-function coderRequestsPaymentCollection($employerEmail,$percentage,$explanation)
+function coderRequestsPaymentCollection($employerEmail,$amount,$explanation)
 {
 	$fromEmail=getLoggedInUser();	if(isMySqlError($fromEmail)) return $fromEmail;
+	$x=isCoder();	if(isMySqlError($x)) return $x;
+	if($x===false) return error_unauthorized_action();
 	$toEmail=getAdmin();	if(isMySqlError($toEmail)) return $toEmail;
-	createRequest($fromEmail,$toEmail,$type,$employerEmail,$percentage,$explanation);
-	
+	$rId=createRequest($fromEmail,$toEmail,request_coder_requests_milestone(),$employerEmail,$percentage,$explanation);	if(isMySqlError($rId)) return $rId;
+	$x=createNotification($toEmail,request_coder_requests_milestone(),"Coder $fromEmail would like to notify that its time for collecting some payments from employer $employerEmail.");	if(isMySqlError($x)) return $x;		//<TODO> if error, still return rId.
+	return $rId;		
 }
-Permission: Coder
-Description: Coder requests admin to collect a portion of funds from client to secure them since a part of the project or entire project is completed. This amount will be displayed to the coder as secured amount along with the total secured amount.
 
-adminConfirmsPaymentCollection($coderEmail,$employerEmail,$percentage)
+/*adminConfirmsPaymentCollection($coderEmail,$employerEmail,$percentage)
 Permission: Admin 
-Description: Admin confirms that a part of the payment is collected from the employer and so its secured.
+Description: Admin confirms that a part of the payment is collected from the employer and so its secured.*/
+function adminConfirmsPaymentCollection($coderEmail,$employerEmail,$percentage)
+{
+	//<TODO>
+}
 
 adminDeniesPaymentCollection($coderEmail,$employerEmail)
 Permission: Admin
 Description: Admin denies the coder the payment. The admin can reply the excuse for denying in the msgs.
 
-coderRequestsIncreaseInBudget($employerEmail,$byAmount,$explanation)
+function coderRequestsIncreaseInBudget($employerEmail,$byAmount,$explanation)
+{
+	$x=isCoder();	if(isMySqlError($x)) return $x;
+	if($x===false) return error_unauthorized_action();
+	$fromEmail=getLoggedInUser();	if(isMySqlError($fromEmail)) return $fromEmail;
+	$toEmail=getAdmin();	if(isMySqlError($toEmail)) return $toEmail;
+	$rId=createRequest($fromEmail,$toEmail,request_coder_requests_increased_budget(),$employerEmail,$byAmount,$explanation);	if(isMySqlError($rId)) return $rId;
+	$x=createNotification($toEmail,request_coder_requests_increased_budget(),"Coder $fromEmail requests increase in budget from employer $employerEmail.");	if(isMySqlError($x)) return $x;			//<TODO> if error, still return rId.
+	return $rId;
+}
 Permission: Coder
 Description: Coder requests admin to increase the budget of the project. The admin is notified of the request.
 

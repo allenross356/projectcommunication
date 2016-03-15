@@ -115,6 +115,7 @@ type (r_type): Type of notification. (i) Request from coder for payment collecti
 parameter 1 (r_param1)
 parameter 2 (r_param2)
 parameter 3 (r_param3)
+status (r_status): String. Null or "approved" or "denied".
 date time (r_creation_dt)
 */
 //*********Requests END****************
