@@ -34,6 +34,7 @@ Admin can see if a coder is there online to entertain the client. If yes, the ad
 Admin can forward all the previous msgs and files between a previous coder and client to new coder. The interface is made so that its easy for admin to deselect a few msgs or files that he doesn't want to foward the new coder.
 
 There will be a log of all the errors that occured for admin to look at.
+
 */
 
 
@@ -50,6 +51,8 @@ Encryption of passwords
 Implement Mysql injection proof queries
 
 Implement Update functionality in GUI.
+
+Before launch, test each function specifically.
 */
 
 
@@ -122,11 +125,11 @@ shareMessage($toEmail,$msgIds)							[DONE]
 Permission: Coder, Employer, Admin
 Description: The admin can share any message(s) with any user. Return true or false.
 
-markMsgSeen($msgId)
+markMsgSeen($msgId)										[DONE]
 Permission: Receiver of msg (Admin, Coder, Employer)
 Description: Receiver of the msg can manually mark the msg as seen. However, the msg will be marked as seen automatically when its displayed to the receiver.
 
-markMsgUnseen($msgId)
+markMsgUnseen($msgId)									[DONE]
 Permission: Receiver of msg (Admin, Coder, Employer)
 Description: Receiver of the msg can manually mark the msg as unseen.
 
@@ -145,10 +148,6 @@ Description: Retrieves a list of 20 msgs received from a sender starting from $s
 retrieveFiles($fromEmail,$startIndex)
 Permission: Coder, Employer, Admin
 Description: Retrieves a list of 20 files' links received from a sender starting from $startIndex arranged in decreasing order with respect to date.
-
-retrieveConnections($startIndex)
-Permission: Coder, Employer, Admin
-Description: Retrieves 20 connections of the currently logged in user starting from $startIndex. 
 */
 //*********Messaging END****************
 
@@ -380,7 +379,7 @@ to email (m_toemail)
 message (m_msg)
 is forwarded (m_isforwarded): Boolean. Denotes if the msg is forwarded.
 forwarded message id (m_forwardid): Same as m_id. Null if m_isforwarded is false, otherwise contains an m_id.
-is seen (m_isseen): Boolean. Denotes whether the msg is marked seen or not.
+is msg seen (m_isseen): Boolean. Denotes whether the msg is marked seen or not.
 date time (m_creation_dt): Date-time of creation of msg.
 */
 //*********Messages END****************
@@ -395,8 +394,10 @@ file id (f_id)
 from email (f_fromemail)
 to email (f_toemail)
 file link (f_filelink)
+file location (f_location): String. The location of the file in filesystem of server.
 is forwarded (f_isforwarded)
 forwarded file id (f_forwardid)
+is file seen (f_isseen): Boolean. Denotes whether the file is marked seen or not.
 date time (f_creation_dt)
 */
 //*********Files END****************
@@ -545,7 +546,7 @@ function shareMessage($toEmail,$msgIds)	//$msgIds is the array of msgId.
 		if($r)
 			$ret[]=$gf->insert_id;		//<TODO> check syntax
 		else
-			$retp[]=error_unknown();				
+			$ret[]=error_unknown();				
 	}
 	return $ret;
 }
@@ -558,11 +559,12 @@ function forwardFile($toEmail,$fileId)
 	//<TODO>
 }
 
-function helperMarkSeen($msgId,$isSeen)	//$isSeen: Boolean
+//Helper function for markMsgSeen, markMsgUnseen, markFileSeen, markFileUnseen functions.
+function helperMarkSeen($msgId,$isSeen,$tableName,$idCol,$isSeenCol)	//$isSeen: Boolean in String
 {
 	$gf=getDatabaseConnection();	if(isMySqlError($gf)) return $gf;
 	$email=getLoggedInUser();	if(isMySqlError($email)) return $email;
-	$r=$gf->query("select * from pc_messages where m_id=$msgId");
+	$r=$gf->query("select * from $tableName where $idCol=$msgId");
 	if($r->num_rows==0)
 		return error_no_records_found();
 	elseif($r->num_rows==1)
@@ -570,7 +572,11 @@ function helperMarkSeen($msgId,$isSeen)	//$isSeen: Boolean
 		if($row=$r->fetch_array())
 		{
 			if($row['m_toemail']!=$email) return error_unauthorized_action();
-			
+			$r=$gf->query("update $tableName set $isSeenCol=$isSeen where $idCol=$msgId");		//<TODO> Confirm syntax of update query.
+			if($r)
+				return true;
+			else
+				return error_unknown();
 		}
 		else
 			return error_unknown();
@@ -579,41 +585,46 @@ function helperMarkSeen($msgId,$isSeen)	//$isSeen: Boolean
 		return error_multiple_records();
 }
 
-markMsgSeen($msgId)
-Permission: Receiver of msg (Admin, Coder, Employer)
-Description: Receiver of the msg can manually mark the msg as seen. However, the msg will be marked as seen automatically when its displayed to the receiver.
 function markMsgSeen($msgId)
 {
-	helperMarkSeen($msgId,true);
+	helperMarkSeen($msgId,"true","pc_messages","m_id","m_isseen");
 }
 
 function markMsgUnseen($msgId)
 {
-	helperMarkSeen($msgId,false);
+	helperMarkSeen($msgId,"false","pc_messages","m_id","m_isseen");
 }
-markMsgUnseen($msgId)
-Permission: Receiver of msg (Admin, Coder, Employer)
-Description: Receiver of the msg can manually mark the msg as unseen.
 
-markFileSeen($msgId)
-Permission: Receiver of file (Admin, Coder, Employer)
-Description: Receiver of the file can manually mark the file as seen. However, the file will be marked as seen automatically when its displayed to the receiver.
+function markFileSeen($msgId)
+{
+	helperMarkSeen($msgId,"true","pc_files","f_id","f_isseen");
+}
 
-markFileUnseen($msgId)
-Permission: Receiver of file (Admin, Coder, Employer)
-Description: Receiver of the file can manually mark the file as unseen.
+function markFileUnseen($msgId)
+{
+	helperMarkSeen($msgId,"false","pc_files","f_id","f_isseen");
+}
 
-retrieveMessages($fromEmail,$startIndex)
+/*retrieveMessages($fromEmail,$startIndex)
 Permission: Coder, Employer, Admin
-Description: Retrieves a list of 20 msgs received from a sender starting from $startIndex arranged in decreasing order with respect to date.
+Description: Retrieves a list of 20 msgs received from a sender starting from $startIndex arranged in decreasing order with respect to date.*/
+function retrieveMessages($fromEmail,$startIndex)
+{
+	//<TODO>
+}
 
-retrieveFiles($fromEmail,$startIndex)
+/*retrieveFiles($fromEmail,$startIndex)
 Permission: Coder, Employer, Admin
-Description: Retrieves a list of 20 files' links received from a sender starting from $startIndex arranged in decreasing order with respect to date.
+Description: Retrieves a list of 20 files' links received from a sender starting from $startIndex arranged in decreasing order with respect to date.*/
+function retrieveFiles($fromEmail,$startIndex)
+{
+	//<TODO>
+}
 
-retrieveConnections($startIndex)
-Permission: Coder, Employer, Admin
-Description: Retrieves 20 connections of the currently logged in user starting from $startIndex. 
+
+
+
+
 //*********Messaging END****************
 
 
