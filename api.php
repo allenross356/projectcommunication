@@ -251,6 +251,18 @@ function retrieveFiles($fromEmail,$startIndex)
 
 
 //*********Notification START****************
+
+//Creates notification
+function createNotification($toEmail,$type,$msg)
+{
+	$gf=getDatabaseConnection();	if(isMySqlError($gf)) return $gf;
+	$r=$gf->query("insert into pc_notifications(n_email,n_type,n_msg) values('$toEmail','$type','$msg')");
+	if($r)
+		return true;
+	else
+		return error_unknown();	
+}
+
 function markNotificationSeen($notificationId)
 {
 	helperMarkSeen($notificationId,"true","pc_notifications","n_id","n_isseen","n_email");
@@ -337,7 +349,7 @@ Description: The budget of employer and admin will be reset. Which means that th
 function createRequest($fromEmail,$toEmail,$type,$param1,$param2,$param3)
 {
 	$gf=getDatabaseConnection();	if(isMySqlError($gf)) return $gf;
-	$r=$gf->query("insert into pc_requests(r_fromemail,r_toemail,r_type,r_param1,r_param2,r_param3) values($fromEmail,$toEmail,$type,$param1,$param2,$param3)");
+	$r=$gf->query("insert into pc_requests(r_fromemail,r_toemail,r_type,r_param1,r_param2,r_param3) values('$fromEmail','$toEmail','$type','$param1','$param2','$param3')");
 	if($r)
 		return true;
 	else
