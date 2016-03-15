@@ -1,0 +1,118 @@
+//***************************************************** DATABASE *****************************************************
+//Database Name: projectcommunication
+//*********Users START****************
+//Table Name:	pc_users
+/*
+user id (u_id)
+full name (u_name)
+email (u_email)
+password (u_pass)
+type (u_type): User type can be: (i) coder, (ii) employer, (iii) admin
+date time (u_creation_dt): Date-time of the account creation.
+is email verified (u_emailverified): Boolean. Denotes if the email is verified.
+account balance (u_balance): Account balance of the user.
+*/
+//*********Users END****************
+
+
+
+
+//*********Sessions START****************
+//Table Name: pc_sessions
+/*
+session id (s_id)
+email (s_email)
+token (s_token)
+creation date time (s_creation_dt)
+expire date time (s_expiration_dt)
+*/
+//*********Users END****************
+
+
+
+
+
+//*********Connections START****************
+//Table Name: pc_connections
+/*
+connection id (c_id)
+coder email (c_coderemail)
+employer email (c_employeremail)
+employer budget
+admin budget
+employer paid so far
+admin paid so far
+*/
+//*********Connections END****************
+
+
+
+
+
+
+
+//*********Messages START****************
+//Table Name: pc_messages
+/*
+message id (m_id)
+from email (m_fromemail)
+to email (m_toemail)
+message (m_msg)
+is forwarded (m_isforwarded): Boolean. Denotes if the msg is forwarded.
+forwarded message id (m_forwardid): Same as m_id. Null if m_isforwarded is false, otherwise contains an m_id.
+is msg seen (m_isseen): Boolean. Denotes whether the msg is marked seen or not.
+date time (m_creation_dt): Date-time of creation of msg.
+*/
+//*********Messages END****************
+
+
+
+
+//*********Files START****************
+//Table Name: pc_files
+/*
+file id (f_id)
+from email (f_fromemail)
+to email (f_toemail)
+file link (f_filelink)
+file location (f_location): String. The location of the file in filesystem of server.
+is forwarded (f_isforwarded)
+forwarded file id (f_forwardid)
+is file seen (f_isseen): Boolean. Denotes whether the file is marked seen or not.
+date time (f_creation_dt)
+*/
+//*********Files END****************
+
+
+
+
+
+
+//*********Notifications START****************
+//Table Name: pc_notifications
+/*
+notification id (n_id)
+to email (n_email)
+type (n_type): Type of notification. (i) Request of <TODO>
+msg (n_msg)
+is notification see (n_isseen)
+date time (n_creation_dt)
+*/
+//*********Notifications END****************
+
+
+
+
+
+//*********Transactions START****************
+// <TODO>
+/*
+transaction id
+from email
+to email
+file link				:	String
+is forwarded			:	Boolean
+forwarded file id	
+date time
+*/
+//*********Transactions END****************

@@ -1,0 +1,54 @@
+//***************************************************** STORY *****************************************************
+
+/*
+Admin can assign a coder to an employer or unassign. Once assigned, the coder and employer can communicate with each other through chat as well as offline msgs. As well files can be shared with other. Coder and employer can always send msg to admin, and admin can send msgs to coders and employers. (Covered,)
+
+The chat, messages and files will be scanned for any words such as gmail, usd, how much, numbers etc. If such words are present, it will be marked and admin will be notified of it. (Covered,)
+
+The software will ask the user to log in. The software will know which user is coder and which is client and which is admin. (Covered,)
+
+The coder will be able to leave a request for admin to collect payments from the client in order to secure funds for himself. When the request is submitted, the admin will be notified. Admin can mark the payment complete whenever he wants to, or mark it denied. (Covered,)
+
+Coder can request admin to increase the price of the project. Employer can request admin to decrease the price of the project. Admin can accept or reject the request. (Covered,)
+
+Coder can request payment withdrawal. (Covered,)
+
+The employer can submit a request to find a new coder. (Covered,)
+
+Coder and employer can report each other, and they can call admin to interject for some problem. (Covered,)
+
+Users can mark notifications, msgs and files as seen or unseen. (Covered,)
+
+Email of the user is verified.
+
+User can change the email and password. User can request password if he forgets. User can add multiple contact informations including emails.
+
+User can check his transactions history.
+
+Admin will be able to reset the budget to reduce the paid amounts. (Covered,) 
+
+Admin can see if a coder is there online to entertain the client. If yes, the admin can ask the coder if he is available to talk to client immediately. If yes, the admin can connect the client and coder both so that they will be able to talk to each other.
+
+Admin can forward all the previous msgs and files between a previous coder and client to new coder. The interface is made so that its easy for admin to deselect a few msgs or files that he doesn't want to foward the new coder.
+
+There will be a log of all the errors that occured for admin to look at.
+
+*/
+
+
+/*
+TODO:
+Implement url security, webrequest security, encypted & expirable tokens for authentications.
+Implement SSL.
+Implement file access security so that the uploaded file links are only accessible by users who are logged in and who have permission to access the file.
+
+Implement Database semaphores for atomic operations.
+
+Encryption of passwords
+
+Implement Mysql injection proof queries
+
+Implement Update functionality in GUI.
+
+Before launch, test each function specifically.
+*/

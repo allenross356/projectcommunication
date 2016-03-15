@@ -1,0 +1,241 @@
+//***************************************************** INTERFACE *****************************************************
+
+//*********Authentication START****************
+/*
+doesUserExist($email)
+Permission: Coder, Employer, Admin
+Description: Returns true if the user exists in the database. False otherwise.
+
+authenticateUser($email,$pass)
+Permission: Coder, Employer, Admin
+Description: Returns true if the user's credentials match. False otherwise.
+
+login($email,$pass)
+Permission: Coder, Employer, Admin
+Description: Logs the user in if the credentials match and return true. False otherwise.
+
+logout()
+Permission: Coder, Employer, Admin
+Description: Logs the user out if any user is logged in. If no user is logged in then nothing happens. Returns true always.
+
+getLoggedInUser()
+Permission: Coder, Employer, Admin
+Description: Returns the email address of the logged in user. Error if no user logged in.
+*/
+
+
+//*********Authentication END****************
+
+
+
+
+
+
+//*********Messaging START****************
+/*
+canCommunicate($toEmail)								[DONE]
+Permission: Coder, Employer, Admin (Admin don't really need to use this function)
+Description: Will return true if the logged in user is allowed to communicate with user with $toEmail email. False otherwise.
+
+sendMessage($toEmail,$msg)								[DONE]
+Permission: Coder, Employer, Admin
+Description: Connected Coder and employer can send msg to each other. Any coder and employer can send msgs to admin, and admin can send msgs to any coder or employer. Admin's email is always my personal email address. Function returns a msg ID on success, or false otherwise.
+
+sendFile($toEmail)
+Permission: Coder, Employer, Admin 
+Description: Similar to sendMessage but with files. Function returns a file ID as well as a file link on success, or false otherwise.
+
+shareFile($toEmail,$fileIds)
+Permission: Admin
+Description: The admin can share any file(s) with any user. Return true or false.
+
+shareMessage($toEmail,$msgIds)							[DONE]
+Permission: Coder, Employer, Admin
+Description: The admin can share any message(s) with any user. Return true or false.
+
+markMsgSeen($msgId)										[DONE]
+Permission: Receiver of msg (Admin, Coder, Employer)
+Description: Receiver of the msg can manually mark the msg as seen. However, the msg will be marked as seen automatically when its displayed to the receiver.
+
+markMsgUnseen($msgId)									[DONE]
+Permission: Receiver of msg (Admin, Coder, Employer)
+Description: Receiver of the msg can manually mark the msg as unseen.
+
+markFileSeen($fileId)									[DONE]
+Permission: Receiver of file (Admin, Coder, Employer)
+Description: Receiver of the file can manually mark the file as seen. However, the file will be marked as seen automatically when its displayed to the receiver.
+
+markFileUnseen($fileId)									[DONE]
+Permission: Receiver of file (Admin, Coder, Employer)
+Description: Receiver of the file can manually mark the file as unseen.
+
+retrieveMessages($fromEmail,$startIndex)
+Permission: Coder, Employer, Admin
+Description: Retrieves a list of 20 msgs received from a sender starting from $startIndex arranged in decreasing order with respect to date.
+
+retrieveFiles($fromEmail,$startIndex)
+Permission: Coder, Employer, Admin
+Description: Retrieves a list of 20 files' links received from a sender starting from $startIndex arranged in decreasing order with respect to date.
+*/
+//*********Messaging END****************
+
+
+
+
+
+
+
+
+//*********Notification START****************
+/*
+markNotificationSeen($notificationId)
+Permission: Receiver of the notification (Employer, Coder, Admin)
+Description: User can manually mark a notification as seen. However, when a notification is displayed to the user, it will automaticatically be marked as seen.
+
+markNotificationUnseen($notificationId)
+Permission: Receiver of the notification (Employer, Coder, Admin)
+Description: User can manually mark a notification as unseen.
+*/
+//*********Notification END****************
+
+
+
+
+
+
+
+//*********Payments START****************
+/*
+coderNotifiesPaymentCollection($employerEmail,$percentage,$explanation)
+Permission: Coder
+Description: Coder requests admin to collect a portion of funds from client to secure them since a part of the project or entire project is completed. This amount will be displayed to the coder as secured amount along with the total secured amount.
+
+adminConfirmsPaymentCollection($coderEmail,$employerEmail,$percentage)
+Permission: Admin 
+Description: Admin confirms that a part of the payment is collected from the employer and so its secured.
+
+adminDeniesPaymentCollection($coderEmail,$employerEmail)
+Permission: Admin
+Description: Admin denies the coder the payment. The admin can reply the excuse for denying in the msgs.
+
+coderRequestsIncreaseInBudget($employerEmail,$byAmount,$explanation)
+Permission: Coder
+Description: Coder requests admin to increase the budget of the project. The admin is notified of the request.
+
+employerRequestsDecreaseInBudget($coderEmail,$byAmount,$explanation)
+Permission: Employer
+Description: Employer can request admin to decrease the budget with an explanation.
+
+cancelBudgetChangeRequest($budgetChangeRequestId)
+Permission: Creator of the budget change request (Employer or Coder).
+Description: Whoever created the budget change request can cancel the request as well.
+
+adminAcceptsChangeInBudget($budgetChangeRequestId)
+Permission: Admin
+Description: Admin can accept the budget change request by the coder or employer.
+
+adminRejectsChangeInBudget($budgetChangeRequestId)
+Permission: Admin
+Description: Admin can reject the budget change request by the coder or employer.
+
+coderRequestsWithdrawal($coderEmail,$amount)
+Permission: Coder
+Description: Coder requests the admin the withdrawal from his account. Returns true if successful, or False if the amount requested is greater than the balance in his account.
+
+adminConfirmsWithdrawal($withdrawalRequestId)
+Permission: Admin
+Description: Admin confirms the withdrawal after the money is sent to the coder.
+
+payCoder($coderEmail,$amount)
+Permission: Admin
+Description: Admin puts the amount in the coder's account which the coder can request to withdraw anytime.
+
+chargeCoder($coderEmail,$amount)
+Permission: Admin
+Description: Admin can charge the coder from his account reducing his account's balance. The balance can go in negative as well.
+
+resetBudget($employerEmail,$coderEmail)
+Permission: Admin
+Description: The budget of employer and admin will be reset. Which means that the employer paid amount and the admin paid amount will be subtracted from the employer budget amount and the admin budget amount respectively to reduce the figures.
+*/
+//*********Payments END****************
+
+
+
+
+
+
+//*********Report START****************
+/*
+reportUser($email,$explanation)
+Permission: Employer, Coder
+Description: Employer or coder can report each other.
+
+reportActionTaken($reportId,$explanation)
+Permission: Admin
+Description: Admin marks the report as taken-care-of, and leaves a remark for the reporter of what kind of action was taken.
+*/
+//*********Report END****************
+
+
+
+
+
+
+
+
+
+//*********Employer START****************
+/*
+requestToFindNewCoder($coderEmail,$explanation)
+Permission: Employer
+Description: Employer can request admin to find another coder. The admin will be notified of this request.
+*/
+//*********Employer END****************
+
+
+
+
+
+
+
+
+
+
+
+
+
+//*********Admin START****************
+/*
+assign($coderEmail,$employerEmail)
+Permission: Admin only.
+Description: Connects a coder and employer, so that they can communicate with each other.
+
+unassign($coderEmail,$employerEmail)
+Permission: Admin only.
+Description: Unconnects a coder and employer, so that they won't be able to communicate with each other anymore.
+*/
+//*********Admin END****************
+
+
+
+
+
+
+
+
+
+
+
+
+//*********GUI START****************
+/*
+getConnections($startIndex)
+Permission:
+Description: The client app can request the list of 20 connections of the logged in user starting from $startIndex.
+
+getNotifications($startIndex)
+Description: The client app can request the list of 20 notifications of the logged in user starting from $startIndex arranged in decreasing order by date.
+
+*/
+//*********GUI START****************
