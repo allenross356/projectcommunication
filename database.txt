@@ -93,12 +93,33 @@ date time (f_creation_dt)
 /*
 notification id (n_id)
 to email (n_email)
-type (n_type): Type of notification. (i) Request of <TODO>
+type (n_type): Type of notification. (i) Request from coder for payment collection, (ii) Cancel request action by request creator, (iii) <TODO>
 msg (n_msg)
 is notification see (n_isseen)
 date time (n_creation_dt)
 */
 //*********Notifications END****************
+
+
+
+
+
+
+//*********Requests START****************
+//Table Name: pc_requests
+/*
+request id (r_id)
+from email (r_fromemail)
+to email (r_toemail)
+type (r_type): Type of notification. (i) Request from coder for payment collection, (ii) Cancel request action by request creator, (iii) <TODO>
+parameter 1 (r_param1)
+parameter 2 (r_param2)
+parameter 3 (r_param3)
+date time (r_creation_dt)
+*/
+//*********Requests END****************
+
+
 
 
 

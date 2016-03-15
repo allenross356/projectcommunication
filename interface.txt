@@ -88,11 +88,11 @@ Description: Retrieves a list of 20 files' links received from a sender starting
 
 //*********Notification START****************
 /*
-markNotificationSeen($notificationId)
+markNotificationSeen($notificationId)					[DONE]
 Permission: Receiver of the notification (Employer, Coder, Admin)
 Description: User can manually mark a notification as seen. However, when a notification is displayed to the user, it will automaticatically be marked as seen.
 
-markNotificationUnseen($notificationId)
+markNotificationUnseen($notificationId)					[DONE]
 Permission: Receiver of the notification (Employer, Coder, Admin)
 Description: User can manually mark a notification as unseen.
 */
@@ -106,7 +106,7 @@ Description: User can manually mark a notification as unseen.
 
 //*********Payments START****************
 /*
-coderNotifiesPaymentCollection($employerEmail,$percentage,$explanation)
+coderRequestsPaymentCollection($employerEmail,$percentage,$explanation)
 Permission: Coder
 Description: Coder requests admin to collect a portion of funds from client to secure them since a part of the project or entire project is completed. This amount will be displayed to the coder as secured amount along with the total secured amount.
 
@@ -159,6 +159,20 @@ Permission: Admin
 Description: The budget of employer and admin will be reset. Which means that the employer paid amount and the admin paid amount will be subtracted from the employer budget amount and the admin budget amount respectively to reduce the figures.
 */
 //*********Payments END****************
+
+
+
+
+
+
+
+//*********Requests START****************
+cancelRequest($requestId)
+Permission: Creator of request (Coder,Employer)
+Description: Creator of the request can cancel the request.
+//*********Requests END****************
+
+
 
 
 

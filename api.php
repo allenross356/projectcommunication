@@ -42,6 +42,69 @@ function isMySqlError($x)
 
 
 
+
+
+
+//*********Authentication START****************
+
+//Tells whether the logged in user is admin or not.
+function isAdmin()
+{
+	//<TODO>
+}
+
+//Tells whether the logged in user is admin or not.
+function isCoder()
+{
+	//<TODO>
+}
+
+//Tells whether the logged in user is admin or not.
+function isEmployer()
+{
+	//<TODO>
+}
+
+//Returns the type of logged in user.
+function typeOfUser()
+{
+	//<TODO>
+}
+
+//Returns the admin email.
+function getAdmin()
+{
+	//<TODO>
+}
+
+/*
+doesUserExist($email)
+Permission: Coder, Employer, Admin
+Description: Returns true if the user exists in the database. False otherwise.
+
+authenticateUser($email,$pass)
+Permission: Coder, Employer, Admin
+Description: Returns true if the user's credentials match. False otherwise.
+
+login($email,$pass)
+Permission: Coder, Employer, Admin
+Description: Logs the user in if the credentials match and return true. False otherwise.
+
+logout()
+Permission: Coder, Employer, Admin
+Description: Logs the user out if any user is logged in. If no user is logged in then nothing happens. Returns true always.
+
+getLoggedInUser()
+Permission: Coder, Employer, Admin
+Description: Returns the email address of the logged in user. Error if no user logged in.
+*/ 
+//*********Authentication END****************
+
+
+
+
+
+
 //*********Messaging START****************
 function canCommunicate($toEmail)
 {
@@ -114,7 +177,7 @@ function forwardFile($toEmail,$fileId)
 	//<TODO>
 }
 
-//Helper function for markMsgSeen, markMsgUnseen, markFileSeen, markFileUnseen functions.
+//Helper function for markMsgSeen, markMsgUnseen, markFileSeen, markFileUnseen, markNotificationSeen and markNotificationUnseen functions.
 function helperMarkSeen($msgId,$isSeen,$tableName,$idCol,$isSeenCol,$emailCol)	//$isSeen: Boolean in String
 {
 	$gf=getDatabaseConnection();	if(isMySqlError($gf)) return $gf;
@@ -188,20 +251,111 @@ function retrieveFiles($fromEmail,$startIndex)
 
 
 //*********Notification START****************
-/*
-markNotificationSeen($notificationId)
-Permission: Receiver of the notification (Employer, Coder, Admin)
-Description: User can manually mark a notification as seen. However, when a notification is displayed to the user, it will automaticatically be marked as seen.
-
-markNotificationUnseen($notificationId)
-Permission: Receiver of the notification (Employer, Coder, Admin)
-Description: User can manually mark a notification as unseen.
-*/
 function markNotificationSeen($notificationId)
 {
 	helperMarkSeen($notificationId,"true","pc_notifications","n_id","n_isseen","n_email");
 }
+
+function markNotificationUnseen($notificationId)
+{
+	helperMarkSeen($notificationId,"false","pc_notifications","n_id","n_isseen","n_email");
+}
 //*********Notification END****************
+
+
+
+
+
+
+
+//*********Payments START****************
+function coderRequestsPaymentCollection($employerEmail,$percentage,$explanation)
+{
+	$fromEmail=getLoggedInUser();	if(isMySqlError($fromEmail)) return $fromEmail;
+	$toEmail=getAdmin();	if(isMySqlError($toEmail)) return $toEmail;
+	createRequest($fromEmail,$toEmail,$type,$employerEmail,$percentage,$explanation);
+	
+}
+Permission: Coder
+Description: Coder requests admin to collect a portion of funds from client to secure them since a part of the project or entire project is completed. This amount will be displayed to the coder as secured amount along with the total secured amount.
+
+adminConfirmsPaymentCollection($coderEmail,$employerEmail,$percentage)
+Permission: Admin 
+Description: Admin confirms that a part of the payment is collected from the employer and so its secured.
+
+adminDeniesPaymentCollection($coderEmail,$employerEmail)
+Permission: Admin
+Description: Admin denies the coder the payment. The admin can reply the excuse for denying in the msgs.
+
+coderRequestsIncreaseInBudget($employerEmail,$byAmount,$explanation)
+Permission: Coder
+Description: Coder requests admin to increase the budget of the project. The admin is notified of the request.
+
+employerRequestsDecreaseInBudget($coderEmail,$byAmount,$explanation)
+Permission: Employer
+Description: Employer can request admin to decrease the budget with an explanation.
+
+cancelBudgetChangeRequest($budgetChangeRequestId)
+Permission: Creator of the budget change request (Employer or Coder).
+Description: Whoever created the budget change request can cancel the request as well.
+
+adminAcceptsChangeInBudget($budgetChangeRequestId)
+Permission: Admin
+Description: Admin can accept the budget change request by the coder or employer.
+
+adminRejectsChangeInBudget($budgetChangeRequestId)
+Permission: Admin
+Description: Admin can reject the budget change request by the coder or employer.
+
+coderRequestsWithdrawal($coderEmail,$amount)
+Permission: Coder
+Description: Coder requests the admin the withdrawal from his account. Returns true if successful, or False if the amount requested is greater than the balance in his account.
+
+adminConfirmsWithdrawal($withdrawalRequestId)
+Permission: Admin
+Description: Admin confirms the withdrawal after the money is sent to the coder.
+
+payCoder($coderEmail,$amount)
+Permission: Admin
+Description: Admin puts the amount in the coder's account which the coder can request to withdraw anytime.
+
+chargeCoder($coderEmail,$amount)
+Permission: Admin
+Description: Admin can charge the coder from his account reducing his account's balance. The balance can go in negative as well.
+
+resetBudget($employerEmail,$coderEmail)
+Permission: Admin
+Description: The budget of employer and admin will be reset. Which means that the employer paid amount and the admin paid amount will be subtracted from the employer budget amount and the admin budget amount respectively to reduce the figures.
+//*********Payments END****************
+
+
+
+
+
+//*********Requests START****************
+//Helper function to create a request.
+function createRequest($fromEmail,$toEmail,$type,$param1,$param2,$param3)
+{
+	$gf=getDatabaseConnection();	if(isMySqlError($gf)) return $gf;
+	$r=$gf->query("insert into pc_requests(r_fromemail,r_toemail,r_type,r_param1,r_param2,r_param3) values($fromEmail,$toEmail,$type,$param1,$param2,$param3)");
+	if($r)
+		return true;
+	else
+		return error_unknown();
+}
+
+/*
+Permission: Creator of request (Coder,Employer)
+Description: Creator of the request can cancel the request.
+*/
+function cancelRequest($requestId)
+{
+	//<TODO>
+}
+
+
+//*********Requests END****************
+
 
 
 ?>
