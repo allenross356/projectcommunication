@@ -100,11 +100,11 @@ Description: Returns the email address of the logged in user. Error if no user l
 
 //*********Messaging START****************
 /*
-canCommunicate($toEmail)
+canCommunicate($toEmail)								[DONE]
 Permission: Coder, Employer, Admin (Admin don't really need to use this function)
 Description: Will return true if the logged in user is allowed to communicate with user with $toEmail email. False otherwise.
 
-sendMessage($toEmail,$msg)
+sendMessage($toEmail,$msg)								[DONE]
 Permission: Coder, Employer, Admin
 Description: Connected Coder and employer can send msg to each other. Any coder and employer can send msgs to admin, and admin can send msgs to any coder or employer. Admin's email is always my personal email address. Function returns a msg ID on success, or false otherwise.
 
@@ -112,13 +112,13 @@ sendFile($toEmail)
 Permission: Coder, Employer, Admin 
 Description: Similar to sendMessage but with files. Function returns a file ID as well as a file link on success, or false otherwise.
 
-forwardFile($toEmail,$fileId)
-Permission: Coder, Employer, Admin
-Description: Any file that a user receives from others, he can forward to someone else. Return true or false.
+shareFile($toEmail,$fileIds)
+Permission: Admin
+Description: The admin can share any file(s) with any user. Return true or false.
 
-forwardMessage($toEmail,$msgId)
+shareMessage($toEmail,$msgIds)							[DONE]
 Permission: Coder, Employer, Admin
-Description: Any msg that a user receives from others, he can forward to someone else. Return true or false.
+Description: The admin can share any message(s) with any user. Return true or false.
 
 markMsgSeen($msgId)
 Permission: Receiver of msg (Admin, Coder, Employer)
@@ -376,9 +376,10 @@ message id (m_id)
 from email (m_fromemail)
 to email (m_toemail)
 message (m_msg)
-is forwarded (m_isforwarded):	Boolean. Denotes if the msg is forwarded.
-forwarded message id (m_forwardid):	Same as m_id. Null if m_isforwarded is false, otherwise contains an m_id.
-date time (m_creation_dt):	Date-time of creation of msg.
+is forwarded (m_isforwarded): Boolean. Denotes if the msg is forwarded.
+forwarded message id (m_forwardid): Same as m_id. Null if m_isforwarded is false, otherwise contains an m_id.
+is seen (m_isseen): Boolean. Denotes whether the msg is marked seen or not.
+date time (m_creation_dt): Date-time of creation of msg.
 */
 //*********Messages END****************
 
@@ -503,7 +504,7 @@ function sendMessage($toEmail,$msg)
 	$x=canCommunicate($toEmail);	if(isMySqlError($x)) return $x;
 	if($x===false) return false;
 	$fromEmail=getLoggedInUser();	if(isMySqlError($fromEmail)) return $fromEmail;
-	$r=$gf->query("insert into pc_messages(m_fromemail,m_toemail,m_msg,m_isforwarded,m_forwardid) values('$fromEmail','$toEmail','$msg',false,null)");	//<TODO> Check false and null.
+	$r=$gf->query("insert into pc_messages(m_fromemail,m_toemail,m_msg,m_isforwarded,m_forwardid,m_isseen) values('$fromEmail','$toEmail','$msg',false,null,false)");	//<TODO> Check false and null.
 	if($r)
 		return $gf->insert_id;
 	else
@@ -518,21 +519,42 @@ function sendFile($toEmail)
 	//<TODO>
 }
 
-function forwardMessage($toEmail,$msgId)
+function shareMessage($toEmail,$msgIds)	//$msgIds is the array of msgId.
 {
+	$gf=getDatabaseConnection();	if(isMySqlError($gf)) return $gf;
+	$x=isAdmin();	if(isMySqlError($x)) return $x;	//<TODO> implement isAdmin() function
+	if($x===false) return false;
+	$fromEmail=getLoggedInUser();	if(isMySqlError($fromEmail)) return $fromEmail;
 	
+	$ret=Array();
+	for($msgIds as $i)		//<TODO> check for loop syntax
+	{
+		$r=$gf->query("insert into pc_messages(m_fromemail,m_toemail,m_msg,m_isforwarded,m_forwardid,m_isseen) values('$fromEmail','$toEmail',null,true,$i,false)");	//<TODO> Check false and null.
+		if($r)
+			$ret[]=$gf->insert_id;		//<TODO> check syntax
+		else
+			$retp[]=error_unknown();				
+	}
+	return $ret;
 }
-Permission: Coder, Employer, Admin
-Description: Any msg that a user receives from others, he can forward to someone else. Return true or false.
 
-forwardFile($toEmail,$fileId)
+/*forwardFile($toEmail,$fileId)
 Permission: Coder, Employer, Admin
-Description: Any file that a user receives from others, he can forward to someone else. Return true or false.
-
+Description: Any file that a user receives from others, he can forward to someone else. Return true or false.*/
+function forwardFile($toEmail,$fileId)
+{
+	//<TODO>
+}
 
 markMsgSeen($msgId)
 Permission: Receiver of msg (Admin, Coder, Employer)
 Description: Receiver of the msg can manually mark the msg as seen. However, the msg will be marked as seen automatically when its displayed to the receiver.
+function markMsgSeen($msgId)
+{
+	$gf=getDatabaseConnection();	if(isMySqlError($gf)) return $gf;
+	$email=getLoggedInUser();	if(isMySqlError($email)) return $email;
+	if()
+}
 
 markMsgUnseen($msgId)
 Permission: Receiver of msg (Admin, Coder, Employer)
