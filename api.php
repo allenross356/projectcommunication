@@ -32,6 +32,8 @@ Admin will be able to reset the budget to reduce the paid amounts. (Covered,)
 Admin can see if a coder is there online to entertain the client. If yes, the admin can ask the coder if he is available to talk to client immediately. If yes, the admin can connect the client and coder both so that they will be able to talk to each other.
 
 Admin can forward all the previous msgs and files between a previous coder and client to new coder. The interface is made so that its easy for admin to deselect a few msgs or files that he doesn't want to foward the new coder.
+
+There will be a log of all the errors that occured for admin to look at.
 */
 
 
@@ -450,6 +452,11 @@ function error_multiple_records()
 	return "error_multiple_records";
 }
 
+function error_no_records_found()
+{
+	return "error_no_records_found";
+}
+
 function error_database_connection()
 {
 	return "error_database_connection";
@@ -465,9 +472,14 @@ function error_unknown()
 	return "error_unknown";
 }
 
+function error_unauthorized_action()
+{
+	return "error_unauthorized_action";
+}
+
 function isMySqlError($x)
 {
-	if($x=="error_multiple_records" || $x=="error_database_connection" || $x=="error_no_user_logged_in" || $x=="error_unknown") return true;
+	if($x=="error_multiple_records" || $x=="error_database_connection" || $x=="error_no_user_logged_in" || $x=="error_unknown" || $x=="error_unauthorized_action" || $x=="error_no_records_found") return true;
 	return false;
 }
 //*********Errors END****************
@@ -546,16 +558,39 @@ function forwardFile($toEmail,$fileId)
 	//<TODO>
 }
 
+function helperMarkSeen($msgId,$isSeen)	//$isSeen: Boolean
+{
+	$gf=getDatabaseConnection();	if(isMySqlError($gf)) return $gf;
+	$email=getLoggedInUser();	if(isMySqlError($email)) return $email;
+	$r=$gf->query("select * from pc_messages where m_id=$msgId");
+	if($r->num_rows==0)
+		return error_no_records_found();
+	elseif($r->num_rows==1)
+	{
+		if($row=$r->fetch_array())
+		{
+			if($row['m_toemail']!=$email) return error_unauthorized_action();
+			
+		}
+		else
+			return error_unknown();
+	}
+	else
+		return error_multiple_records();
+}
+
 markMsgSeen($msgId)
 Permission: Receiver of msg (Admin, Coder, Employer)
 Description: Receiver of the msg can manually mark the msg as seen. However, the msg will be marked as seen automatically when its displayed to the receiver.
 function markMsgSeen($msgId)
 {
-	$gf=getDatabaseConnection();	if(isMySqlError($gf)) return $gf;
-	$email=getLoggedInUser();	if(isMySqlError($email)) return $email;
-	if()
+	helperMarkSeen($msgId,true);
 }
 
+function markMsgUnseen($msgId)
+{
+	helperMarkSeen($msgId,false);
+}
 markMsgUnseen($msgId)
 Permission: Receiver of msg (Admin, Coder, Employer)
 Description: Receiver of the msg can manually mark the msg as unseen.
