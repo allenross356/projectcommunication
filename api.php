@@ -87,7 +87,7 @@ Description: Logs the user out if any user is logged in. If no user is logged in
 
 getLoggedInUser()
 Permission: Coder, Employer, Admin
-Description: Returns the email address of the logged in user. False if no user logged in.
+Description: Returns the email address of the logged in user. Error if no user logged in.
 */
 
 
@@ -443,37 +443,92 @@ date time
 
 //***************************************************** DEFINITION *****************************************************
 
+//*********Errors START****************
+function error_multiple_records()
+{
+	return "error_multiple_records";
+}
+
+function error_database_connection()
+{
+	return "error_database_connection";
+}
+
+function error_no_user_logged_in()
+{
+	return "error_no_user_logged_in";
+}
+
+function error_unknown()
+{
+	return "error_unknown";
+}
+
+function isMySqlError($x)
+{
+	if($x=="error_multiple_records" || $x=="error_database_connection" || $x=="error_no_user_logged_in" || $x=="error_unknown") return true;
+	return false;
+}
+//*********Errors END****************
+
+
+
 //*********Messaging START****************
 function canCommunicate($toEmail)
 {
 	$gf=getDatabaseConnection();	if(isMySqlError($gf)) return $gf;
 	$userEmail=getLoggedInUser();	if(isMySqlError($userEmail)) return $userEmail;
-	$userType=getUserType($email);	if(isMySqlError($userType)) return $userType;	
-	//<TODO> implement the function getUserType
+	$userType=getUserType($email);	if(isMySqlError($userType)) return $userType;	 
 	$toType=getUserType($toEmail);	if(isMySqlError($toType)) return $toType;
 	if($toType=="admin" || $userType=="admin") return true;
 	if($userType==$toType) return false;
 	if($userType=="employer") swap($userEmail,$toEmail);
 	$r=$gf->query("select * from pc_connections where c_coderemail='$userEmail' and c_employeremail='$toEmail'");
-	if($r->)
+	if($r)
+	{
+		if($r->num_rows==1)
+			return true;
+		elseif($r->num_rows==0)
+			return false;
+		else
+			return error_multiple_records();		
+	}
+	else
+		return error_unknown();
 }
 
+function sendMessage($toEmail,$msg)
+{
+	$gf=getDatabaseConnection();	if(isMySqlError($gf)) return $gf;
+	$x=canCommunicate($toEmail);	if(isMySqlError($x)) return $x;
+	if($x===false) return false;
+	$fromEmail=getLoggedInUser();	if(isMySqlError($fromEmail)) return $fromEmail;
+	$r=$gf->query("insert into pc_messages(m_fromemail,m_toemail,m_msg,m_isforwarded,m_forwardid) values('$fromEmail','$toEmail','$msg',false,null)");	//<TODO> Check false and null.
+	if($r)
+		return $gf->insert_id;
+	else
+		return error_unknown();	
+}
 
-sendMessage($toEmail,$msg)
-Permission: Coder, Employer, Admin
-Description: Connected Coder and employer can send msg to each other. Any coder and employer can send msgs to admin, and admin can send msgs to any coder or employer. Admin's email is always my personal email address. Function returns a msg ID on success, or false otherwise.
-
-sendFile($toEmail)
+/*sendFile($toEmail)
 Permission: Coder, Employer, Admin 
-Description: Similar to sendMessage but with files. Function returns a file ID as well as a file link on success, or false otherwise.
+Description: Similar to sendMessage but with files. Function returns a file ID as well as a file link on success, or false otherwise.*/
+function sendFile($toEmail)
+{
+	//<TODO>
+}
+
+function forwardMessage($toEmail,$msgId)
+{
+	
+}
+Permission: Coder, Employer, Admin
+Description: Any msg that a user receives from others, he can forward to someone else. Return true or false.
 
 forwardFile($toEmail,$fileId)
 Permission: Coder, Employer, Admin
 Description: Any file that a user receives from others, he can forward to someone else. Return true or false.
 
-forwardMessage($toEmail,$msgId)
-Permission: Coder, Employer, Admin
-Description: Any msg that a user receives from others, he can forward to someone else. Return true or false.
 
 markMsgSeen($msgId)
 Permission: Receiver of msg (Admin, Coder, Employer)
