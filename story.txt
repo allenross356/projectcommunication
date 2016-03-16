@@ -33,11 +33,21 @@ Admin can forward all the previous msgs and files between a previous coder and c
 
 There will be a log of all the errors that occured for admin to look at.
 
-Chron will delete automatically the expired requests that are cancelled. The chron will run once every day.
+Chron will delete automatically the expired requests that are cancelled. (Covered,)
+
+Chron will check all the withdrawal requests and the ones which are over the current balance will be denied automatically. (Covered,)
+
+The chron will run once every day.
 
 If a cancelled request is accepted, then it is uncancelled automatically.
 
 Employer can create refund request. Admin can accept or deny. If admin accepts, it can choose a custom amount to refund, and it can accept to immediate refund fully into the account or it can apply the refunds to future purchases of the services.
+
+The payment calculation accuracy will be of 10 digits after decimal.
+
+All the functions should be atomic, and if partially successful then they should roll back.
+
+Users can submit anomalies, so in the case of system crash and data loss and account values changing, platform will know and it will be able to restore the database to its original values.
 */
 
 

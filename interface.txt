@@ -110,7 +110,7 @@ coderRequestsPaymentCollection($employerEmail,$percentage,$explanation)				[DONE
 Permission: Coder
 Description: Coder requests admin to collect a portion of funds from client to secure them since a part of the project or entire project is completed. This amount will be displayed to the coder as secured amount along with the total secured amount.
 
-adminConfirmsPaymentCollection($coderEmail,$employerEmail,$percentage)
+adminConfirmsPaymentCollection($coderEmail,$employerEmail,$percentage)				 
 Permission: Admin 
 Description: Admin confirms that a part of the payment is collected from the employer and so its secured.
 
@@ -271,5 +271,8 @@ Description: The client app can request the list of 20 notifications of the logg
 /*
 deleteCancelledExpiredRequests()
 Description: Will delete the requests that are concurrently expired and cancelled at the same time.
+
+denyOutOfBalanceWithdrawalRequests()
+Description: Will deny all the withdrawal requests that surpass the user's current balance.
 */
 //*********Chron END****************

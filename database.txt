@@ -38,10 +38,10 @@ expire date time (s_expiration_dt)
 connection id (c_id)
 coder email (c_coderemail)
 employer email (c_employeremail)
-employer budget
-admin budget
-employer paid so far
-admin paid so far
+employer budget (c_employerbudget)
+admin budget (c_adminbudget)
+employer paid so far (c_amountemployerpaid)
+admin paid so far (c_amountadminpaid)
 */
 //*********Connections END****************
 

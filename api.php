@@ -71,6 +71,11 @@ function request_user_requests_withdrawal()
 {
 	return "request_user_requests_withdrawal";
 }
+
+function notification_milestone_confirmed()
+{
+	return "notification_milestone_confirmed";
+}
 //*********Request and Notification Types END****************
 
 
@@ -122,7 +127,12 @@ function getBalance($email)
 		if($r->num_rows==0)
 			return error_no_records_found();
 		elseif($r->num_rows==1)
-			return $r['u_balance'];
+		{
+			if($row=$r->fetch_array())
+				return $row['u_balance'];
+			else
+				return error_unknown();
+		}
 		else
 			return error_multiple_records();
 	}
@@ -353,13 +363,52 @@ function coderRequestsPaymentCollection($employerEmail,$amount,$explanation)
 	return $rId;		
 }
 
+//Returns employer and admin budget in the form array(employer budget, admin budget)
+function getBudget($employerEmail,$coderEmail)
+{
+	$gf=getDatabaseConnection();	if(isMySqlError($gf)) return $gf;
+	$r=$gf->query("select c_employerbudget, c_adminbudget from pc_connections where c_employeremail='$employerEmail' and c_coderemail='$coderEmail'");
+	if($r)
+	{
+		if($r->num_rows==1)
+		{
+			if($row=$r->fetch_array())
+				return $row;
+			else
+				return error_unknown();
+		}
+		elseif($r->num_rows==0)
+			return error_no_records_found();
+		else
+			return error_multiple_records(); 
+	}
+	else
+		return error_unknown();
+}
+
 /*adminConfirmsPaymentCollection($coderEmail,$employerEmail,$percentage)
 Permission: Admin 
 Description: Admin confirms that a part of the payment is collected from the employer and so its secured.*/
-function adminConfirmsPaymentCollection($coderEmail,$employerEmail,$percentage)
+function adminConfirmsPaymentCollection($coderEmail,$employerEmail,$employerAmount)
 {
-	//<TODO>
+	$x=isAdmin();	if(isMySqlError($x)) return $x;
+	if($x===false) return error_unauthorized_action();
+	$budgets=getBudget($employerEmail,$coderEmail);	if(isMySqlError($budgets)) return $budgets;
+	$x=chargeUser($employerEmail,$employerAmount);	if(isMySqlError($x)) return $x;	
+	$x=payUser($coderEmail,$employerAmount*$budgets[1]/$budgets[0]);	if(isMySqlError($x)) return $x;	 //<TODO> make this function atomic, and roll-backable if any step fails.
+	//<TODO> implement accuracy of upto 10 digits after decimal.
+	//<TODO> find the best coder's collection request that match and mark it approved, and send notification to coder.
+	$a=$employerAmount*$budgets[1]/$budgets[0]; //<TODO> implement accuracy of upto 10 digits after decimal, and then display only upto 2 digits after decimal.
+	$x=createNotification($coderEmail,notification_milestone_confirmed(),"Payment is received from $employerEmail of $a");	//<TODO> START FROM HERE!
+	return true;
 }
+
+100,	200,		0,		0,			0
+100, 	200, 		0, 		100, 		50
+100,	200,		10,		100,		40
+90,		100,		0,		0,			40
+140,	200,		0,		0,			40
+
 
 adminDeniesPaymentCollection($coderEmail,$employerEmail)
 Permission: Admin
@@ -428,7 +477,7 @@ function userCancelsWithdrawalRequest($withdrawalRequestId)
 	$fromEmail=getLoggedInUser();	if(isMySqlError($fromEmail)) return $fromEmail;
 	$toEmail=getAdmin();	if(isMySqlError($toEmail)) return $toEmail;
 	$i=requestInfo($budgetChangeRequestId);	if(isMySqlError($i))return $i;
-	if($i[0]!=$fromEmail) return error_unauthorized_action();
+	if($i[0]!=$fromEmail) return error_unauthorized_action(); 
 	$isEmployer=isEmployer();	if(isMySqlError($isEmployer)) return $isEmployer;
 	$x=cancelRequest($withdrawaleRequestId);	if(isMySqlError($x)) return $x;
 	if($isEmployer===true)
@@ -442,11 +491,11 @@ adminConfirmsWithdrawal($withdrawalRequestId)
 Permission: Admin
 Description: Admin confirms the withdrawal after the money is sent to the coder.
 
-payCoder($coderEmail,$amount)
+payUser($email,$amount)
 Permission: Admin
 Description: Admin puts the amount in the coder's account which the coder can request to withdraw anytime.
 
-chargeCoder($coderEmail,$amount)
+chargeUser($email,$amount)
 Permission: Admin
 Description: Admin can charge the coder from his account reducing his account's balance. The balance can go in negative as well.
 
