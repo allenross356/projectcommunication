@@ -33,6 +33,7 @@ Admin can forward all the previous msgs and files between a previous coder and c
 
 There will be a log of all the errors that occured for admin to look at.
 
+Chron will delete automatically the expired requests that are cancelled. The chron will run once every day.
 */
 
 

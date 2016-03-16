@@ -126,7 +126,7 @@ employerRequestsDecreaseInBudget($coderEmail,$byAmount,$explanation)				[DONE]
 Permission: Employer
 Description: Employer can request admin to decrease the budget with an explanation.
 
-cancelBudgetChangeRequest($budgetChangeRequestId)
+cancelBudgetChangeRequest($budgetChangeRequestId)									[DONE]
 Permission: Creator of the budget change request (Employer or Coder).
 Description: Whoever created the budget change request can cancel the request as well.
 
@@ -253,3 +253,19 @@ Description: The client app can request the list of 20 notifications of the logg
 
 */
 //*********GUI START****************
+
+
+
+
+
+
+
+
+
+
+//*********Chron START****************
+/*
+deleteCancelledExpiredRequests()
+Description: Will delete the requests that are concurrently expired and cancelled at the same time.
+*/
+//*********Chron END****************

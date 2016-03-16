@@ -116,7 +116,9 @@ parameter 1 (r_param1)
 parameter 2 (r_param2)
 parameter 3 (r_param3)
 status (r_status): String. Null or "approved" or "denied".
+is cancelled (r_cancelled): Boolean. Default value: False. Indicates whether the request is cancelled at a later time.
 date time (r_creation_dt)
+expiry date (r_expiry_dt): If the request is cancelled, then the request will be deleted from the database at an expiry date.
 */
 //*********Requests END****************
 

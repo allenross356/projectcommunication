@@ -46,7 +46,7 @@ function isMySqlError($x)
 
 
 
-//*********Request Types START****************
+//*********Request and Notification Types START****************
 function request_coder_requests_milestone()
 {
 	return "request_coder_requests_milestone";
@@ -61,7 +61,12 @@ function request_employer_requests_decreased_budget()
 {
 	return "request_employer_requests_decreased_budget";
 }
-//*********Request Types END****************
+
+function notification_user_cancels_budget_change_request()
+{
+	return "notification_user_cancels_budget_change_request";
+}
+//*********Request and Notification Types END****************
 
 
 
@@ -351,10 +356,21 @@ function employerRequestsDecreaseInBudget($coderEmail,$byAmount,$explanation)
 	return $rId;
 }
 
-
-cancelBudgetChangeRequest($budgetChangeRequestId)
-Permission: Creator of the budget change request (Employer or Coder).
-Description: Whoever created the budget change request can cancel the request as well.
+function cancelBudgetChangeRequest($budgetChangeRequestId)
+{
+	$x=isCoder();	if(isMySqlError($x)) return $x;
+	if($x===false) return error_unauthorized_action();
+	$fromEmail=getLoggedInUser();	if(isMySqlError($fromEmail)) return $fromEmail;
+	$toEmail=getAdmin();	if(isMySqlError($toEmail)) return $toEmail;
+	$i=requestInfo($budgetChangeRequestId);	if(isMySqlError($i))return $i;
+	$isEmployer=isEmployer();	if(isMySqlError($isEmployer)) return $isEmployer;
+	$x=cancelRequest($budgetChangeRequestId);	if(isMySqlError($x)) return $x;
+	if($isEmployer===true)
+		$x=createNotification($toEmail,notification_user_cancels_budget_change_request(),"Employer $fromEmail cancels budget change request from coder {$i[2]}.");	if(isMySqlError($x)) return $x;			//<TODO> if error, still return rId.
+	else
+		$x=$x=createNotification($toEmail,notification_user_cancels_budget_change_request(),"Coder $fromEmail cancels budget change request from employer {$i[2]}.");	if(isMySqlError($x)) return $x;			//<TODO> if error, still return rId.
+	return true;
+}
 
 adminAcceptsChangeInBudget($budgetChangeRequestId)
 Permission: Admin
@@ -408,11 +424,33 @@ Description: Creator of the request can cancel the request.
 function cancelRequest($requestId)
 {
 	//<TODO>
+	//call markRequestForAutoDeletion()
 }
 
+//Returns information about a request. 
+function requestInfo($requestId)	//Returns Array(request_creator_email, request_type, email_of_user_request_is_referring_to, $byAmount, $explanation)
+{
+	//<TODO>
+}
+
+//Sets the expiry date of the request to 30 days after current system date.
+function markRequestForAutoDeletion($requestId)
+{
+	//<TODO>
+}
 
 //*********Requests END****************
 
+
+
+
+
+
+
+
+//*********Chron START****************
+
+//*********Chron END****************
 
 
 ?>
