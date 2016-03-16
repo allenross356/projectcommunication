@@ -389,10 +389,6 @@ function employerRequestsDecreaseInBudget($coderEmail,$byAmount,$explanation)
 
 function cancelBudgetChangeRequest($budgetChangeRequestId)
 {
-	//<TODO> check if the request was created by the caller.
-	//$x=isCoder();	if(isMySqlError($x)) return $x;
-	//if($x===false) return error_unauthorized_action();
-	
 	$fromEmail=getLoggedInUser();	if(isMySqlError($fromEmail)) return $fromEmail;
 	$toEmail=getAdmin();	if(isMySqlError($toEmail)) return $toEmail;
 	$i=requestInfo($budgetChangeRequestId);	if(isMySqlError($i))return $i;
@@ -402,7 +398,7 @@ function cancelBudgetChangeRequest($budgetChangeRequestId)
 	if($isEmployer===true)
 		$x=createNotification($toEmail,notification_user_cancels_budget_change_request(),"Employer $fromEmail cancels budget change request from coder {$i[2]}.");	if(isMySqlError($x)) return $x;			//<TODO> if error, still return rId.
 	else
-		$x=$x=createNotification($toEmail,notification_user_cancels_budget_change_request(),"Coder $fromEmail cancels budget change request from employer {$i[2]}.");	if(isMySqlError($x)) return $x;			//<TODO> if error, still return rId.
+		$x=createNotification($toEmail,notification_user_cancels_budget_change_request(),"Coder $fromEmail cancels budget change request from employer {$i[2]}.");	if(isMySqlError($x)) return $x;			//<TODO> if error, still return rId.
 	return true;
 }
 
@@ -427,9 +423,20 @@ function userRequestsWithdrawal($amount)
 	return $rId;
 }
 
-userCancelsWithdrawalRequest($withdrawalRequestId)
-Permission: Creator of the withdrawal request (Coder)
-Description: Coder can cancel his withdrawal request that he created.
+function userCancelsWithdrawalRequest($withdrawalRequestId)
+{
+	$fromEmail=getLoggedInUser();	if(isMySqlError($fromEmail)) return $fromEmail;
+	$toEmail=getAdmin();	if(isMySqlError($toEmail)) return $toEmail;
+	$i=requestInfo($budgetChangeRequestId);	if(isMySqlError($i))return $i;
+	if($i[0]!=$fromEmail) return error_unauthorized_action();
+	$isEmployer=isEmployer();	if(isMySqlError($isEmployer)) return $isEmployer;
+	$x=cancelRequest($withdrawaleRequestId);	if(isMySqlError($x)) return $x;
+	if($isEmployer===true)
+		$x=createNotification($toEmail,notification_user_cancels_budget_change_request(),"Employer $fromEmail cancels withdrawal request.");	if(isMySqlError($x)) return $x;			//<TODO> if error, still return rId.
+	else
+		$x=createNotification($toEmail,notification_user_cancels_budget_change_request(),"Coder $fromEmail cancels withdrawal request.");	if(isMySqlError($x)) return $x;			//<TODO> if error, still return rId.
+	return true;
+}
 
 adminConfirmsWithdrawal($withdrawalRequestId)
 Permission: Admin
