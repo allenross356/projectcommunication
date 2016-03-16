@@ -122,7 +122,7 @@ coderRequestsIncreaseInBudget($employerEmail,$byAmount,$explanation)				[DONE]
 Permission: Coder
 Description: Coder requests admin to increase the budget of the project. The admin is notified of the request.
 
-employerRequestsDecreaseInBudget($coderEmail,$byAmount,$explanation)
+employerRequestsDecreaseInBudget($coderEmail,$byAmount,$explanation)				[DONE]
 Permission: Employer
 Description: Employer can request admin to decrease the budget with an explanation.
 

@@ -56,6 +56,11 @@ function request_coder_requests_increased_budget()
 {
 	return "request_coder_requests_increased_budget";
 }
+
+function request_employer_requests_decreased_budget()
+{
+	return "request_employer_requests_decreased_budget";
+}
 //*********Request Types END****************
 
 
@@ -334,12 +339,18 @@ function coderRequestsIncreaseInBudget($employerEmail,$byAmount,$explanation)
 	$x=createNotification($toEmail,request_coder_requests_increased_budget(),"Coder $fromEmail requests increase in budget from employer $employerEmail.");	if(isMySqlError($x)) return $x;			//<TODO> if error, still return rId.
 	return $rId;
 }
-Permission: Coder
-Description: Coder requests admin to increase the budget of the project. The admin is notified of the request.
 
-employerRequestsDecreaseInBudget($coderEmail,$byAmount,$explanation)
-Permission: Employer
-Description: Employer can request admin to decrease the budget with an explanation.
+function employerRequestsDecreaseInBudget($coderEmail,$byAmount,$explanation)
+{
+	$x=isCoder();	if(isMySqlError($x)) return $x;
+	if($x===false) return error_unauthorized_action();
+	$fromEmail=getLoggedInUser();	if(isMySqlError($fromEmail)) return $fromEmail;
+	$toEmail=getAdmin();	if(isMySqlError($toEmail)) return $toEmail;
+	$rId=createRequest($fromEmail,$toEmail,request_employer_requests_decreased_budget(),$coderEmail,$byAmount,$explanation);	if(isMySqlError($rId)) return $rId;
+	$x=createNotification($toEmail,request_employer_requests_decreased_budget(),"Employer $fromEmail requests decrease in budget from coder $coderEmail.");	if(isMySqlError($x)) return $x;			//<TODO> if error, still return rId.
+	return $rId;
+}
+
 
 cancelBudgetChangeRequest($budgetChangeRequestId)
 Permission: Creator of the budget change request (Employer or Coder).

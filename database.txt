@@ -93,7 +93,7 @@ date time (f_creation_dt)
 /*
 notification id (n_id)
 to email (n_email)
-type (n_type): Type of notification. (i) Request from coder for payment collection, (ii) Cancel request action by request creator, (iii) <TODO>
+type (n_type): Type of notification. (i) Request from coder for payment collection, (ii) Cancel request action by request creator, (iii) Request from coder to increase budget, (iv) Request from employer to decrease budget, (v) <TODO>
 msg (n_msg)
 is notification see (n_isseen)
 date time (n_creation_dt)
@@ -111,7 +111,7 @@ date time (n_creation_dt)
 request id (r_id)
 from email (r_fromemail)
 to email (r_toemail)
-type (r_type): Type of notification. (i) Request from coder for payment collection, (ii) Cancel request action by request creator, (iii) <TODO>
+type (r_type): Type of notification. (i) Request from coder for payment collection, (ii) Request from coder to increase budget, (iii) Request from employer to decrease budget, (iv) <TODO>
 parameter 1 (r_param1)
 parameter 2 (r_param2)
 parameter 3 (r_param3)
