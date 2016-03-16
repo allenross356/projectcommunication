@@ -138,9 +138,13 @@ adminRejectsChangeInBudget($budgetChangeRequestId)
 Permission: Admin
 Description: Admin can reject the budget change request by the coder or employer.
 
-coderRequestsWithdrawal($coderEmail,$amount)
-Permission: Coder
+userRequestsWithdrawal($amount)														[DONE]
+Permission: Coder, Employer
 Description: Coder requests the admin the withdrawal from his account. Returns true if successful, or False if the amount requested is greater than the balance in his account.
+
+userCancelsWithdrawalRequest($withdrawalRequestId)					
+Permission: Creator of the withdrawal request (Coder, Employer)
+Description: Coder can cancel his withdrawal request that he created.
 
 adminConfirmsWithdrawal($withdrawalRequestId)
 Permission: Admin

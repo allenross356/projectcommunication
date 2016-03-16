@@ -34,6 +34,10 @@ Admin can forward all the previous msgs and files between a previous coder and c
 There will be a log of all the errors that occured for admin to look at.
 
 Chron will delete automatically the expired requests that are cancelled. The chron will run once every day.
+
+If a cancelled request is accepted, then it is uncancelled automatically.
+
+Employer can create refund request. Admin can accept or deny. If admin accepts, it can choose a custom amount to refund, and it can accept to immediate refund fully into the account or it can apply the refunds to future purchases of the services.
 */
 
 

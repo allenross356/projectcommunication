@@ -66,6 +66,11 @@ function notification_user_cancels_budget_change_request()
 {
 	return "notification_user_cancels_budget_change_request";
 }
+
+function request_user_requests_withdrawal()
+{
+	return "request_user_requests_withdrawal";
+}
 //*********Request and Notification Types END****************
 
 
@@ -105,6 +110,32 @@ function typeOfUser()
 function getAdmin()
 {
 	//<TODO>
+}
+
+//Gets current balance in the specified user's account.
+function getBalance($email)
+{
+	gf=getDatabaseConnection();	if(isMySqlError($gf)) return $gf;
+	$r=$gf->query("select u_balance from pc_users where u_email='$email'");
+	if($r)
+	{
+		if($r->num_rows==0)
+			return error_no_records_found();
+		elseif($r->num_rows==1)
+			return $r['u_balance'];
+		else
+			return error_multiple_records();
+	}
+	else
+		return error_unknown();
+}
+
+//Gets current balance in the logged in user's account.
+function getBalance()
+{
+	$x=getLoggedInUser();	if(isMySqlError($x)) return $x;
+	$x=getBalance($x);	if(isMySqlError($x)) return $x;
+	return $x;
 }
 
 /*
@@ -347,7 +378,7 @@ function coderRequestsIncreaseInBudget($employerEmail,$byAmount,$explanation)
 
 function employerRequestsDecreaseInBudget($coderEmail,$byAmount,$explanation)
 {
-	$x=isCoder();	if(isMySqlError($x)) return $x;
+	$x=isEmployer();	if(isMySqlError($x)) return $x;
 	if($x===false) return error_unauthorized_action();
 	$fromEmail=getLoggedInUser();	if(isMySqlError($fromEmail)) return $fromEmail;
 	$toEmail=getAdmin();	if(isMySqlError($toEmail)) return $toEmail;
@@ -358,8 +389,9 @@ function employerRequestsDecreaseInBudget($coderEmail,$byAmount,$explanation)
 
 function cancelBudgetChangeRequest($budgetChangeRequestId)
 {
-	$x=isCoder();	if(isMySqlError($x)) return $x;
-	if($x===false) return error_unauthorized_action();
+	//<TODO> check if the request was created by the caller.
+	//$x=isCoder();	if(isMySqlError($x)) return $x;
+	//if($x===false) return error_unauthorized_action();
 	$fromEmail=getLoggedInUser();	if(isMySqlError($fromEmail)) return $fromEmail;
 	$toEmail=getAdmin();	if(isMySqlError($toEmail)) return $toEmail;
 	$i=requestInfo($budgetChangeRequestId);	if(isMySqlError($i))return $i;
@@ -380,9 +412,22 @@ adminRejectsChangeInBudget($budgetChangeRequestId)
 Permission: Admin
 Description: Admin can reject the budget change request by the coder or employer.
 
-coderRequestsWithdrawal($coderEmail,$amount)
-Permission: Coder
-Description: Coder requests the admin the withdrawal from his account. Returns true if successful, or False if the amount requested is greater than the balance in his account.
+function userRequestsWithdrawal($amount)
+{
+	$fromEmail=getLoggedInUser();	if(isMySqlError($fromEmail)) return $fromEmail;
+	$toEmail=getAdmin();	if(isMySqlError($toEmail)) return $toEmail;
+	$rId=createRequest($fromEmail,$toEmail,request_user_requests_withdrawal(),$amount);	if(isMySqlError($rId)) return $rId;
+	$x=isCoder();	if(isMySqlError($x)) return $x;
+	if($x===true)
+		$x=createNotification($toEmail,request_user_requests_withdrawal(),"Coder $fromEmail requests withdrawal of amount $$amount.");	if(isMySqlError($x)) return $x;			//<TODO> if error, still return rId.
+	else
+		$x=createNotification($toEmail,request_user_requests_withdrawal(),"Employer $fromEmail requests withdrawal of amount $$amount.");	if(isMySqlError($x)) return $x;			//<TODO> if error, still return rId.		
+	return $rId;
+}
+
+userCancelsWithdrawalRequest($withdrawalRequestId)
+Permission: Creator of the withdrawal request (Coder)
+Description: Coder can cancel his withdrawal request that he created.
 
 adminConfirmsWithdrawal($withdrawalRequestId)
 Permission: Admin
@@ -407,7 +452,7 @@ Description: The budget of employer and admin will be reset. Which means that th
 
 //*********Requests START****************
 //Helper function to create a request.
-function createRequest($fromEmail,$toEmail,$type,$param1,$param2,$param3)
+function createRequest($fromEmail,$toEmail,$type,$param1,$param2="",$param3="")
 {
 	$gf=getDatabaseConnection();	if(isMySqlError($gf)) return $gf;
 	$r=$gf->query("insert into pc_requests(r_fromemail,r_toemail,r_type,r_param1,r_param2,r_param3) values('$fromEmail','$toEmail','$type','$param1','$param2','$param3')");
