@@ -150,11 +150,11 @@ adminConfirmsWithdrawal($withdrawalRequestId)
 Permission: Admin
 Description: Admin confirms the withdrawal after the money is sent to the coder.
 
-payCoder($coderEmail,$amount)
+payUser($email,$amount)
 Permission: Admin
 Description: Admin puts the amount in the coder's account which the coder can request to withdraw anytime.
 
-chargeCoder($coderEmail,$amount)
+chargeUser($email,$amount)
 Permission: Admin
 Description: Admin can charge the coder from his account reducing his account's balance. The balance can go in negative as well.
 
