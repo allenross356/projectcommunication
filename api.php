@@ -392,9 +392,11 @@ function cancelBudgetChangeRequest($budgetChangeRequestId)
 	//<TODO> check if the request was created by the caller.
 	//$x=isCoder();	if(isMySqlError($x)) return $x;
 	//if($x===false) return error_unauthorized_action();
+	
 	$fromEmail=getLoggedInUser();	if(isMySqlError($fromEmail)) return $fromEmail;
 	$toEmail=getAdmin();	if(isMySqlError($toEmail)) return $toEmail;
 	$i=requestInfo($budgetChangeRequestId);	if(isMySqlError($i))return $i;
+	if($i[0]!=$fromEmail) return error_unauthorized_action();
 	$isEmployer=isEmployer();	if(isMySqlError($isEmployer)) return $isEmployer;
 	$x=cancelRequest($budgetChangeRequestId);	if(isMySqlError($x)) return $x;
 	if($isEmployer===true)
