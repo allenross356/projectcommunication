@@ -110,9 +110,13 @@ coderRequestsPaymentCollection($employerEmail,$percentage,$explanation)				[DONE
 Permission: Coder
 Description: Coder requests admin to collect a portion of funds from client to secure them since a part of the project or entire project is completed. This amount will be displayed to the coder as secured amount along with the total secured amount.
 
-adminConfirmsPaymentCollection($coderEmail,$employerEmail,$percentage)				 
+adminConfirmsPaymentCollection($coderEmail,$employerEmail,$employerAmount,$coderAmount,$coderPay)				 
 Permission: Admin 
-Description: Admin confirms that a part of the payment is collected from the employer and so its secured.
+Description: Admin confirms that a part of the payment is collected from the employer and so its secured. Admin can also release some amount to coder if he wants.
+
+adminConfirmsPaymentCollectionRequest($requestId,$employerAmount,$coderAmount,$coderPay,$explanation)
+Permission: Admin
+Description: Admin confirms that a part of the payment is collected from the employer and so its secured. Admin can also release some amount to coder if he wants.
 
 adminDeniesPaymentCollection($coderEmail,$employerEmail)
 Permission: Admin

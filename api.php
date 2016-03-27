@@ -388,26 +388,27 @@ function getBudget($employerEmail,$coderEmail)
 
 /*adminConfirmsPaymentCollection($coderEmail,$employerEmail,$percentage)
 Permission: Admin 
-Description: Admin confirms that a part of the payment is collected from the employer and so its secured.*/
-function adminConfirmsPaymentCollection($coderEmail,$employerEmail,$employerAmount)
+Description: Admin confirms that a part of the payment is collected from the employer and so its secured. Admin can also release some amount to coder if he wants.*/
+function adminConfirmsPaymentCollection($coderEmail,$employerEmail,$employerAmount,$coderAmount,$coderPay)
 {
 	$x=isAdmin();	if(isMySqlError($x)) return $x;
 	if($x===false) return error_unauthorized_action();
-	$budgets=getBudget($employerEmail,$coderEmail);	if(isMySqlError($budgets)) return $budgets;
 	$x=chargeUser($employerEmail,$employerAmount);	if(isMySqlError($x)) return $x;	
-	$x=payUser($coderEmail,$employerAmount*$budgets[1]/$budgets[0]);	if(isMySqlError($x)) return $x;	 //<TODO> make this function atomic, and roll-backable if any step fails.
+	$x=payUser($coderEmail,$coderPay);	if(isMySqlError($x)) return $x;	 //<TODO> make this function atomic, and roll-backable if any step fails.
 	//<TODO> implement accuracy of upto 10 digits after decimal.
-	//<TODO> find the best coder's collection request that match and mark it approved, and send notification to coder.
-	$a=$employerAmount*$budgets[1]/$budgets[0]; //<TODO> implement accuracy of upto 10 digits after decimal, and then display only upto 2 digits after decimal.
-	$x=createNotification($coderEmail,notification_milestone_confirmed(),"Payment is received from $employerEmail of $a");	//<TODO> START FROM HERE!
+	$x=createNotification($coderEmail,notification_milestone_confirmed(),"Payment is received from $employerEmail of $coderAmount");	
 	return true;
 }
 
-100,	200,		0,		0,			0
-100, 	200, 		0, 		100, 		50
-100,	200,		10,		100,		40
-90,		100,		0,		0,			40
-140,	200,		0,		0,			40
+adminConfirmsPaymentCollectionRequest($requestId,$employerAmount,$coderAmount,$coderPay,$explanation)
+Permission: Admin
+Description: Admin confirms that a part of the payment is collected from the employer and so its secured. Admin can also release some amount to coder if he wants.
+function adminConfirmsPaymentCollectionRequest($requestId,$employerAmount,$coderAmount,$coderPay,$explanation)
+{
+	$x=isAdmin();	if(isMySqlError($x)) return $x;
+	if($x===false) return error_unauthorized_action();
+	
+}
 
 
 adminDeniesPaymentCollection($coderEmail,$employerEmail)
@@ -531,7 +532,7 @@ function cancelRequest($requestId)
 }
 
 //Returns information about a request. 
-function requestInfo($requestId)	//Returns Array(request_creator_email, request_type, email_of_user_request_is_referring_to, $byAmount, $explanation)
+function requestInfo($requestId)	//Returns Array(request_creator_email, email_of_user_request_is_referring_to, request_type, $byAmount, $explanation, param3)
 {
 	//<TODO>
 }
