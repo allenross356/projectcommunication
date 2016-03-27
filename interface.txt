@@ -118,7 +118,7 @@ adminConfirmsPaymentCollectionRequest($requestId,$employerAmount,$coderAmount,$c
 Permission: Admin
 Description: Admin confirms that a part of the payment is collected from the employer and so its secured. Admin can also release some amount to coder if he wants.
 
-adminDeniesPaymentCollection($requestId,$explanation)
+adminDeniesPaymentCollection($requestId,$explanation)								[DONE]
 Permission: Admin
 Description: Admin denies the coder the payment. The admin can reply the excuse for denying in the msgs.
 

@@ -81,6 +81,11 @@ function notification_coder_payment()
 {
 	return "notification_coder_payment";
 }
+
+function notification_coder_milestone_request_denied()
+{
+	return "notification_coder_milestone_request_denied";
+}
 //*********Request and Notification Types END****************
 
 
@@ -405,10 +410,10 @@ function adminConfirmsPaymentCollection($coderEmail,$employerEmail,$employerAmou
 	$x=chargeUser($employerEmail,$employerAmount);	if(isMySqlError($x)) return $x;	
 	$x=payUser($coderEmail,$coderPay);	if(isMySqlError($x)) return $x;	 //<TODO> make this function atomic, and roll-backable if any step fails.
 	//<TODO> implement accuracy of upto 10 digits after decimal.
-	$x=createNotification($coderEmail,notification_milestone_confirmed(),"Payment is received from $employerEmail of $coderAmount.");	if(isMySqlError($x)) return $x; //<TODO> return true even if notification fails.
+	$x=createNotification($coderEmail,notification_milestone_confirmed(),"Payment is received from $employerEmail of $$coderAmount.");	if(isMySqlError($x)) return $x; //<TODO> return true even if notification fails.
 	if($coderPay>0)	//<TODO> Check this equation later
 	{
-		$x=createNotification($coderEmail,notification_coder_payment(),"Payment made in your account of $coderPay from $employerEmail.");	if(isMySqlError($x)) return $x; //<TODO> return true even if notification fails.
+		$x=createNotification($coderEmail,notification_coder_payment(),"Payment made in your account of $$coderPay from $employerEmail.");	if(isMySqlError($x)) return $x; //<TODO> return true even if notification fails.
 	}
 	return true;
 }
@@ -420,26 +425,27 @@ function adminConfirmsPaymentCollectionRequest($requestId,$employerAmount,$coder
 	$i=requestInfo($requestId);	if(isMySqlError($i)) return $i;
 	$x=chargeUser($i[2],$employerAmount);	if(isMySqlError($x)) return $x;
 	$x=payUser($i[0],$coderPay);	if(isMySqlError($x)) return $x;	//<TODO> make this function atomic, and roll-backable if any step fails.
-	$nt="Payment is received from {$i[2]} of $coderAmount.";
+	$nt="Payment is received from {$i[2]} of $$coderAmount.";
 	if($explanation!=="" && $explanation!==null && $explanation!==false) $nt.=" Explanation from admin: $explanation";
 	$x=createNotification($i[0],notification_milestone_confirmed(),$nt);	if(isMySqlError($x)) return $x;		//<TODO> return true even if notification fails.
 	if($coderPay>0)	//<TODO> Check this equation later
 	{
-		$x=createNotification($i[0],notification_coder_payment(),"Payment made in your account of $coderPay from {$i[2]}.");	if(isMySqlError($x)) return $x; //<TODO> return true even if notification fails.
+		$x=createNotification($i[0],notification_coder_payment(),"Payment made in your account of $$coderPay from {$i[2]}.");	if(isMySqlError($x)) return $x; //<TODO> return true even if notification fails.
 	}
 	$x=markRequestApproved($requestId);	if(isMySqlError($x)) return $x; //<TODO> return true even if notification fails.
 	return true;
 }
 
-
-adminDeniesPaymentCollection($coderEmail,$employerEmail)
-Permission: Admin
-Description: Admin denies the coder the payment. The admin can reply the excuse for denying in the msgs.
-function adminDeniesPaymentCollection($requestId,$explanation)
+function adminDeniesPaymentCollection($requestId,$explanation="")
 {
 	$x=isAdmin();	if(isMySqlError($x)) return $x;
 	if($x===false) return error_unauthorized_action();
-	//<TODO> START FROM HERE.
+	$i=requestInfo($requestId);
+	$x=markRequestDenied($requestId);
+	$nt="Your milestone request from {$i[2]} of amount ${$i[3]} is denied.";
+	if($explanation!=="" && $explanation!==null && $explanation!==false) $nt.=" Explanation from admin: $explanation";
+	$x=createNotification($coderEmail,notification_coder_milestone_request_denied(),$nt);	if(isMySqlError($x)) return $x; //<TODO> return true even if notification fails.
+	return true;
 }
 
 function coderRequestsIncreaseInBudget($employerEmail,$byAmount,$explanation)
