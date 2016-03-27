@@ -66,4 +66,6 @@ Implement Mysql injection proof queries
 Implement Update functionality in GUI.
 
 Before launch, test each function specifically.
+
+The way to implement the Mysql queries atomic and roll backable is by queueing all the tasks and keeping a check on them and notifying the admin if tasks fail repeatedly, and try the tasks every day until they succeed. 
 */
