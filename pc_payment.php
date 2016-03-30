@@ -90,6 +90,10 @@ function coderRequestsIncreaseInBudget($employerEmail,$byAmount,$explanation)
 	return $rId;
 }
 
+coderDecreasesBudget($employerEmail,$byAmount)				
+Permission: Coder
+Description: Coder decreases the budget of the project. The admin is notified of the decision.
+
 function employerRequestsDecreaseInBudget($coderEmail,$byAmount,$explanation)
 {
 	$x=isEmployer();	if(isMySqlError($x)) return $x;
@@ -100,6 +104,10 @@ function employerRequestsDecreaseInBudget($coderEmail,$byAmount,$explanation)
 	$x=createNotification($toEmail,request_employer_requests_decreased_budget(),"Employer $fromEmail requests decrease in budget from coder $coderEmail.");	if(isMySqlError($x)) return $x;			//<TODO> if error, still return rId.
 	return $rId;
 }
+
+employerIncreasesBudget($coderEmail,$byAmount)				
+Permission: Employer
+Description: Employer increases the budget of the project. The admin is notified of the decision.
 
 function cancelBudgetChangeRequest($budgetChangeRequestId)
 {
@@ -116,35 +124,41 @@ function cancelBudgetChangeRequest($budgetChangeRequestId)
 	return true;
 }
 
-adminAcceptsChangeInBudget($budgetChangeRequestId)
-Permission: Admin
-Description: Admin can accept the budget change request by the coder or employer.
 function adminAcceptsChangeInBudget($budgetChangeRequestId)
 {
 	//<TODO> Error handling
+	$gf=getDatabaseConnection();
 	$x=isAdmin();  
 	if($x===false) return error_unauthorized_action(); 
 	$i=getRequestInfo($budgetChangeRequestId);
-	markRequestApproved($budgetChangeRequestId);
-	$gf=getDatabaseConnection();
 	$x=isCoder($i[0]);
 	if($x===true)
 	{
 		$coderEmail=$i[0];
 		$employerEmail=$i[3];
+		$field="c_adminbudget";
+		$sign="+";
 	}
 	else
 	{
 		$coderEmail=$i[3];
 		$employerEmail=$i[0];
+		$field="c_employerbudget";
+		$sign="-";
 	}
-	$byAmt=$i[]
-	$r=$gf->query("update pc_connections set c_ where c_coderemail='$coderEmail' and c_employeremail='$employerEmail'");
+	$byAmt=$i[4];
+	$r=$gf->query("update pc_connections set $field = $field $sign $byAmt where c_coderemail='$coderEmail' and c_employeremail='$employerEmail'");
+	//<TODO> Error handling with $r
+	
+	markRequestApproved($budgetChangeRequestId);
+	return true;
 }
 
 adminRejectsChangeInBudget($budgetChangeRequestId)
 Permission: Admin
 Description: Admin can reject the budget change request by the coder or employer.
+
+function adminRejectsChangeInBudget($budgetChangeRequestId)
 
 function userRequestsWithdrawal($amount)
 {

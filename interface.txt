@@ -126,15 +126,23 @@ coderRequestsIncreaseInBudget($employerEmail,$byAmount,$explanation)				[DONE]
 Permission: Coder
 Description: Coder requests admin to increase the budget of the project. The admin is notified of the request.
 
+coderDecreasesBudget($employerEmail,$byAmount)				
+Permission: Coder
+Description: Coder decreases the budget of the project. The admin is notified of the decision.
+
 employerRequestsDecreaseInBudget($coderEmail,$byAmount,$explanation)				[DONE]
 Permission: Employer
 Description: Employer can request admin to decrease the budget with an explanation.
+
+employerIncreasesBudget($coderEmail,$byAmount)				
+Permission: Employer
+Description: Employer increases the budget of the project. The admin is notified of the decision.
 
 cancelBudgetChangeRequest($budgetChangeRequestId)									[DONE]
 Permission: Creator of the budget change request (Employer or Coder).
 Description: Whoever created the budget change request can cancel the request as well.
 
-adminAcceptsChangeInBudget($budgetChangeRequestId)
+adminAcceptsChangeInBudget($budgetChangeRequestId)									[DONE]
 Permission: Admin
 Description: Admin can accept the budget change request by the coder or employer.
 
