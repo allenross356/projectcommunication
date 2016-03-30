@@ -151,14 +151,17 @@ function adminAcceptsChangeInBudget($budgetChangeRequestId)
 	//<TODO> Error handling with $r
 	
 	markRequestApproved($budgetChangeRequestId);
+	createNotification($i[0],notification_admin_accepts_change_in_budget(),"Your request of change of budget is accepted.");	//<TODO> Put more specific notification msg.
 	return true;
 }
 
-adminRejectsChangeInBudget($budgetChangeRequestId)
-Permission: Admin
-Description: Admin can reject the budget change request by the coder or employer.
-
 function adminRejectsChangeInBudget($budgetChangeRequestId)
+{	//<TODO> implement error handling
+	$i=getRequestInfo($budgetChangeRequestId);
+	markRequestDenied($budgetChangeRequestId);
+	createNotification($i[0],notification_admin_rejects_change_in_budget(),"Your request of change of budget is rejected. Contact admin to know the reasons.");	//<TODO> Put more specific notification msg.
+	return true;
+}
 
 function userRequestsWithdrawal($amount)
 {

@@ -39,5 +39,15 @@ function notification_coder_milestone_request_denied()
 {
 	return "notification_coder_milestone_request_denied";
 }
+
+function notification_admin_accepts_change_in_budget()
+{
+	return "notification_admin_accepts_change_in_budget";
+}
+
+function notification_admin_rejects_change_in_budget()
+{
+	return "notification_admin_rejects_change_in_budget";
+}
 //*********Request and Notification Types END****************
 ?>
