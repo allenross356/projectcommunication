@@ -488,6 +488,15 @@ function cancelBudgetChangeRequest($budgetChangeRequestId)
 adminAcceptsChangeInBudget($budgetChangeRequestId)
 Permission: Admin
 Description: Admin can accept the budget change request by the coder or employer.
+function adminAcceptsChangeInBudget($budgetChangeRequestId)
+{
+	//<TODO> Error handling
+	$i=requestInfo($budgetChangeRequestId);
+	markRequestApproved($budgetChangeRequestId);
+	$gf=getDatabaseConnection();
+	//<TODO> START FROM HERE
+	$r=$gf->query("update pc_users")
+}
 
 adminRejectsChangeInBudget($budgetChangeRequestId)
 Permission: Admin
