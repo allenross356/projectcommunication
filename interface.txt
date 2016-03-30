@@ -146,7 +146,7 @@ adminAcceptsChangeInBudget($budgetChangeRequestId)									[DONE]
 Permission: Admin
 Description: Admin can accept the budget change request by the coder or employer.
 
-adminRejectsChangeInBudget($budgetChangeRequestId)
+adminRejectsChangeInBudget($budgetChangeRequestId)									[DONE]
 Permission: Admin
 Description: Admin can reject the budget change request by the coder or employer.
 

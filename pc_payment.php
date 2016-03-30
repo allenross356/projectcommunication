@@ -157,6 +157,8 @@ function adminAcceptsChangeInBudget($budgetChangeRequestId)
 
 function adminRejectsChangeInBudget($budgetChangeRequestId)
 {	//<TODO> implement error handling
+	$x=isAdmin();
+	if($x===false) return error_unauthorized_action();
 	$i=getRequestInfo($budgetChangeRequestId);
 	markRequestDenied($budgetChangeRequestId);
 	createNotification($i[0],notification_admin_rejects_change_in_budget(),"Your request of change of budget is rejected. Contact admin to know the reasons.");	//<TODO> Put more specific notification msg.
@@ -194,6 +196,12 @@ function userCancelsWithdrawalRequest($withdrawalRequestId)
 adminConfirmsWithdrawal($withdrawalRequestId)
 Permission: Admin
 Description: Admin confirms the withdrawal after the money is sent to the coder.
+function adminConfirmsWithdrawal($withdrawalRequestId)
+{
+	$gf=getDatabaseConnection();
+	$i=getRequestInfo($withdrawalRequestId);
+	
+}
 
 payUser($email,$amount)
 Permission: Admin
