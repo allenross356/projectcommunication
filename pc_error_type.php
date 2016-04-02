@@ -30,9 +30,14 @@ function error_unauthorized_action()
 	return "error_unauthorized_action";
 }
 
+function error_withdrawal_exceeds_balance()
+{
+	return "error_withdrawal_exceeds_balance";
+}
+
 function isMySqlError($x)
 {
-	if($x=="error_multiple_records" || $x=="error_database_connection" || $x=="error_no_user_logged_in" || $x=="error_unknown" || $x=="error_unauthorized_action" || $x=="error_no_records_found") return true;
+	if($x=="error_multiple_records" || $x=="error_database_connection" || $x=="error_no_user_logged_in" || $x=="error_unknown" || $x=="error_unauthorized_action" || $x=="error_no_records_found" || $x=="error_withdrawal_exceeds_balance") return true;
 	return false;
 }
 //*********Errors END****************

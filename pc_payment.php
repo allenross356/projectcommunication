@@ -165,10 +165,65 @@ function adminRejectsChangeInBudget($budgetChangeRequestId)
 	return true;
 }
 
+//Returns the total of pending withdrawal request amounts of the logged in user.
+function getTotalWithdrawals()
+{
+	//<TODO> Implement error checking.
+	$email=getLoggedInUser();
+	$type=request_user_requests_withdrawal();
+	$gf=getDatabaseConnection();
+	$r=$gf->query("select sum(r_param1) as totalamount from pc_requests where r_type='$type' and r_fromemail='$email' and r_status=''");	//<TODO> check 'as' clause.
+	if($r)
+	{
+		if($r->num_rows==1)
+		{
+			if($row=$r->fetch_array())
+				return $row['totalamount'];
+			else
+				return error_unknown();
+		}
+		elseif($r->num_rows==0)
+			return error_unknown();
+		else
+			return error_multiple_records();
+	}
+	else
+		return error_unknown();
+}
+
+//Returns the total balance of the user with specified email. Trusts the calling function that the calling function will always provide the email of the logged in user only.
+//$gf is the database connection that the calling function will provide.
+function getTotalBalance($gf,$email)
+{
+	$r=$gf->query("select u_balance from pc_users where u_email='$email'");
+	if($r)
+	{
+		if($r->num_rows==1)
+		{
+			if($row=$r->fetch_array())
+				return $row['u_balance'];
+			else
+				return error_unknown();
+		}
+		elseif($r->num_rows==0)
+			return error_no_records_found();
+		else 
+			return error_multiple_records();
+	}
+	else
+		return error_unknown();
+}
+
 function userRequestsWithdrawal($amount)
 {
+	//<TODO>  implement check: amount of pending withdrawals plus current request shudnt be greater than total balance.
 	$fromEmail=getLoggedInUser();	if(isMySqlError($fromEmail)) return $fromEmail;
 	$toEmail=getAdmin();	if(isMySqlError($toEmail)) return $toEmail;
+	$tw=getTotalWithdrawals();
+	$twu=$amount+$tw;
+	$tb=getTotalBalance($gf,$fromEmail);
+	if($twu>$tb)
+		return error_withdrawal_exceeds_balance();
 	$rId=createRequest($fromEmail,$toEmail,request_user_requests_withdrawal(),$amount);	if(isMySqlError($rId)) return $rId;
 	$x=isCoder();	if(isMySqlError($x)) return $x;
 	if($x===true)
@@ -201,7 +256,11 @@ function adminConfirmsWithdrawal($withdrawalRequestId)
 	$gf=getDatabaseConnection();
 	$i=getRequestInfo($withdrawalRequestId);
 	
+	update pc_users set u_balance=u_balance-$amount
+	
+	//<TODO> START FROM HERE
 }
+
 
 payUser($email,$amount)
 Permission: Admin

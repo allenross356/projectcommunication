@@ -158,7 +158,7 @@ userCancelsWithdrawalRequest($withdrawalRequestId)									[DONE]
 Permission: Creator of the withdrawal request (Coder, Employer)
 Description: Coder can cancel his withdrawal request that he created.
 
-adminConfirmsWithdrawal($withdrawalRequestId)
+adminConfirmsWithdrawal($withdrawalRequestId,$amount)
 Permission: Admin
 Description: Admin confirms the withdrawal after the money is sent to the coder.
 
