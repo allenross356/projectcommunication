@@ -6,37 +6,46 @@ session_start();
 //Tells whether the logged in user is admin or not.
 function isAdmin()
 {
-	//<TODO>
+	//<TODO> Implement error handlers.
+	$x=getLoggedInUserType();
+	if($x=="admin") return true;
+	return false;
 }
 
 //Tells whether the logged in user is coder or not.
 function isCoder()
 {
-	//<TODO>
+	//<TODO> Implement error handlers.
+	$x=getLoggedInUserType();
+	if($x=="coder") return true;
+	return false;
 }
 
 //Tells whether the specified user is coder or not.
 function isCoder($email)
 {
-	//<TODO>
+	//<TODO> Implement error handlers.
+	$x=getUserType($email);
+	if($x=="coder") return true;
+	return false;
 }
 
 //Tells whether the logged in user is employer or not.
 function isEmployer()
 {
-	//<TODO>
+	//<TODO> Implement error handlers.
+	$x=getLoggedInUserType();
+	if($x=="employer") return true;
+	return false;
 }
 
 //Tells whether the specified user is employer or not.
 function isEmployer($email)
 {
-	//<TODO>
-}
-
-//Returns the type of logged in user.
-function typeOfUser()
-{
-	//<TODO>
+	//<TODO> Implement error handlers.
+	$x=getUserType($email);
+	if($x=="employer") return true;
+	return false;
 }
 
 //Returns the admin email.
@@ -140,5 +149,38 @@ function getLoggedInUser()
 	return $_SESSION['email'];
 }
 
+//Returns the type of the logged in user.
+function getLoggedInUserType()
+{
+	//<TODO> Implement error handlers
+	$email=getLoggedInUser();
+	return getUserType($email);
+}
+
+//Returns type of the specified user.
+function getUserType($email)
+{
+	//<TODO> Implement error handlers 
+	$gf=getDatabaseConnection();
+	$r=$gf->query("select u_type from pc_users where u_email='$email'");
+	if($r)
+	{
+		if($r->num_rows==1)
+		{
+			if($row=$r->fetch_array())
+				return $row['u_type'];
+			else
+				return error_unknown();
+		}
+		elseif($r->num_rows==0)
+		{
+			return error_no_records_found();
+		}
+		else
+			return error_multiple_records();
+	}
+	else
+		return error_unknown();	
+}
 //*********Authentication END****************
 ?>
