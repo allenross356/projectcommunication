@@ -1,6 +1,8 @@
 <?php
 //*********Authentication START****************
 
+session_start();
+
 //Tells whether the logged in user is admin or not.
 function isAdmin()
 {
@@ -74,26 +76,69 @@ function getBalance()
 	return $x;
 }
 
-/*
-doesUserExist($email)
-Permission: Coder, Employer, Admin
-Description: Returns true if the user exists in the database. False otherwise.
+function doesUserExist($email)
+{
+	//<TODO> Implement the error handlers
+	$g=getDatabaseConnection();
+	$q="select u_name from pm_users where u_email='$email'";	//<TODO Make query injection proof>
+	$r=$g->query($q);
+	if($r)
+	{
+		if($r->num_rows==0)
+			return false;	
+		elseif($r->num_rows==1)
+			return true;
+		else
+			return error_multiple_records();	 
+	}
+	else
+		return error_unknown();	//<TODO> confirm if it won't return error string when num_rows=0
+}
 
-authenticateUser($email,$pass)
-Permission: Coder, Employer, Admin
-Description: Returns true if the user's credentials match. False otherwise.
+function authenticateUser($email,$pass)
+{
+	//<TODO> Implement secure encrypted password.
+	//<TODO> Implement error handling.
+	$gf=getDatabaseConnection();
+	$r=$gf->query("select * from pc_users where u_email='$email' and u_pass='$pass'");
+	if($r)
+	{
+		if($r->num_rows==1)
+			return true;
+		elseif($r->num_rows==0)
+			return false;
+		else
+			return error_multiple_records();
+	}
+	else
+		return error_unknown();
+}
 
-login($email,$pass)
-Permission: Coder, Employer, Admin
-Description: Logs the user in if the credentials match and return true. False otherwise.
+function login($email,$pass)
+{
+	//<TODO> Implement secure token session instead of storing email.
+	//<TODO> Implement SSL security. 
+	$x=authenticateUser($email,$pass);
+	if($x===true)
+	{
+		$_SESSION['email']=$email;
+		return true;
+	}
+	else
+		return false;
+}
 
-logout()
-Permission: Coder, Employer, Admin
-Description: Logs the user out if any user is logged in. If no user is logged in then nothing happens. Returns true always.
+function logout()
+{
+	unset($_SESSION['email']);
+	return true;
+}
 
-getLoggedInUser()
-Permission: Coder, Employer, Admin
-Description: Returns the email address of the logged in user. Error if no user logged in.
-*/ 
+function getLoggedInUser()
+{
+	//<TODO> Implement error handling.
+	return $_SESSION['email'];
+}
+
 //*********Authentication END****************
 ?>

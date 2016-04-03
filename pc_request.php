@@ -24,13 +24,19 @@ function cancelRequest($requestId)
 //Returns information about a request. 
 function getRequestInfo($requestId)	//Returns Array(from_email, to_email, request_type, param1, param2, param3)
 {
-	//<TODO>
+	//<TODO> Implement the error handlers.
+	$gf=getDatabaseConnection();
+	$r=$gf->query("select r_fromemail, r_toemail, r_type, r_param1, r_param2, r_param3 from pc_requests where r_id=$requestId");
+	if($row=$r->fetch_array())
+		return $row;
+	else
+		return error_unknown();
 }
 
 //Sets the expiry date of the request to 30 days after current system date.
 function markRequestForAutoDeletion($requestId)
 {
-	//<TODO>
+	//<TODO> 
 }
 
 function markRequestApproved($requestId)

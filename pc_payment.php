@@ -286,11 +286,5 @@ function chargeUser($email,$amount)
 	$r=$gf->query("update pc_users set u_balance=u_balance-$amount where u_email='$email'");
 	return true;
 }
-
-
-
-resetBudget($employerEmail,$coderEmail)
-Permission: Admin
-Description: The budget of employer and admin will be reset. Which means that the employer paid amount and the admin paid amount will be subtracted from the employer budget amount and the admin budget amount respectively to reduce the figures.
 //*********Payments END****************
 ?>
