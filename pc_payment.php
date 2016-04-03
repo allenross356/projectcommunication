@@ -269,14 +269,25 @@ function adminConfirmsWithdrawal($withdrawalRequestId)
 	return true;
 }
 
+function payUser($email,$amount)
+{
+	//<TODO> Implement the error handlers
+	$x=isAdmin();
+	if($x===false) return error_unauthorized_action();
+	$r=$gf->query("update pc_users set u_balance=u_balance+$amount where u_email='$email'");
+	return true;
+}
 
-payUser($email,$amount)
-Permission: Admin
-Description: Admin puts the amount in the coder's account which the coder can request to withdraw anytime.
+function chargeUser($email,$amount)
+{
+	//<TODO> Implement the error handlers
+	$x=isAdmin();
+	if($x===false) return error_unauthorized_action();
+	$r=$gf->query("update pc_users set u_balance=u_balance-$amount where u_email='$email'");
+	return true;
+}
 
-chargeUser($email,$amount)
-Permission: Admin
-Description: Admin can charge the coder from his account reducing his account's balance. The balance can go in negative as well.
+
 
 resetBudget($employerEmail,$coderEmail)
 Permission: Admin
