@@ -25,6 +25,16 @@ function request_user_requests_withdrawal()
 	return "request_user_requests_withdrawal";
 }
 
+function notification_admin_confirms_withdrawal()
+{
+	return "request_admin_confirms_withdrawal";
+}
+
+function notification_withdrawal_exceeds_balance()
+{
+	return "notification_withdrawal_exceeds_balance";
+}
+
 function notification_milestone_confirmed()
 {
 	return "notification_milestone_confirmed";

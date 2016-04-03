@@ -248,17 +248,25 @@ function userCancelsWithdrawalRequest($withdrawalRequestId)
 	return true;
 }
 
-adminConfirmsWithdrawal($withdrawalRequestId)
-Permission: Admin
-Description: Admin confirms the withdrawal after the money is sent to the coder.
 function adminConfirmsWithdrawal($withdrawalRequestId)
 {
+	//<TODO> Implement error handling. 
 	$gf=getDatabaseConnection();
+	$x=$isAdmin();	
+	if($x===false) return error_unauthorized_action();
 	$i=getRequestInfo($withdrawalRequestId);
-	
-	update pc_users set u_balance=u_balance-$amount
-	
-	//<TODO> START FROM HERE
+	$userEmail=$i[0];
+	$amount=$i[3];
+	$tbalance=getTotalBalance($gf,$userEmail);
+	$nbalance=$tbalance-$amount;
+	if($tbalance<$amount)
+	{
+		$x=createNotification($userEmail,notification_withdrawal_exceeds_balance(),"Error: Withdrawal amount $$amount exceeds the balance $$tbalance." );
+		return error_withdrawal_exceeds_balance();		
+	}		
+	$r=$gf->query("update pc_users set u_balance=u_balance-$amount where u_email='$userEmail'");
+	$x=createNotification($userEmail,notification_admin_confirms_withdrawal(),"The amount $$amount is already sent to your registered bank or paypal account. It may take a few days to appear depending on your country and account type. Your current total balance is $$nbalance.");
+	return true;
 }
 
 
