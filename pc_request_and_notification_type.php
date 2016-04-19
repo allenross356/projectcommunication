@@ -10,9 +10,19 @@ function request_coder_requests_increased_budget()
 	return "request_coder_requests_increased_budget";
 }
 
+function notification_coder_reduces_budget()
+{
+	return "notification_coder_reduces_budget";
+}
+
 function request_employer_requests_decreased_budget()
 {
 	return "request_employer_requests_decreased_budget";
+}
+
+function notification_employer_increases_budget()
+{
+	return "notification_employer_increases_budget";
 }
 
 function notification_user_cancels_budget_change_request()

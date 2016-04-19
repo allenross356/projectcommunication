@@ -86,13 +86,26 @@ function coderRequestsIncreaseInBudget($employerEmail,$byAmount,$explanation)
 	$fromEmail=getLoggedInUser();	if(isMySqlError($fromEmail)) return $fromEmail;
 	$toEmail=getAdmin();	if(isMySqlError($toEmail)) return $toEmail;
 	$rId=createRequest($fromEmail,$toEmail,request_coder_requests_increased_budget(),$employerEmail,$byAmount,$explanation);	if(isMySqlError($rId)) return $rId;
-	$x=createNotification($toEmail,request_coder_requests_increased_budget(),"Coder $fromEmail requests increase in budget from employer $employerEmail.");	if(isMySqlError($x)) return $x;			//<TODO> if error, still return rId.
+	$x=createNotification($toEmail,request_coder_requests_increased_budget(),"Coder $fromEmail requests increase in budget from employer $employerEmail.");	if(isMySqlError($x)) rleturn $x;			//<TODO> if error, still return rId.
 	return $rId;
 }
 
 coderDecreasesBudget($employerEmail,$byAmount)				
 Permission: Coder
 Description: Coder decreases the budget of the project. The admin is notified of the decision.
+function coderDecreasesBudget($employerEmail,$byAmount)
+{
+	//<TODO> update the git
+	//<TODO> Implement error handling
+	$x=isCoder();
+	if($x===false) return error_unauthorized_action();
+	$coderEmail=getLoggedInUser();
+	$gf=getDatabaseConnection();
+	$r=$gf->query("update pc_connections set c_adminbudget=c_adminbudget-$byAmount where c_coderemail='$coderEmail' and c_employeremail='$employerEmail'");
+	$adminEmail=getAdmin();
+	$x=createNotification($adminEmail,notification_coder_reduces_budget(),"Coder $coderEmail reduces budget for employer $employerEmail.");
+	return true;
+}
 
 function employerRequestsDecreaseInBudget($coderEmail,$byAmount,$explanation)
 {
@@ -108,6 +121,18 @@ function employerRequestsDecreaseInBudget($coderEmail,$byAmount,$explanation)
 employerIncreasesBudget($coderEmail,$byAmount)				
 Permission: Employer
 Description: Employer increases the budget of the project. The admin is notified of the decision.
+function employerIncreasesBudget($coderEmail,$byAmount)
+{
+	//<TODO> update the git
+	//<TODO> Implement error handling
+	$x=isEmployer();
+	if($x===false) return error_unauthorized_action();
+	$employerEmail=getLoggedInUser();
+	$adminEmail=getAdmin();
+	$r=$gf->query("update pc_connections set c_employerbudget=c_employerbudget+$byAmount c_employeremail='$employerEmail' and c_coderemail='$coderEmail'");  
+	$x=createNotification($adminEmail,notification_employer_increases_budget(),"Employer $employerEmail increases budget for coder $coderEmail.");
+	return true;
+}
 
 function cancelBudgetChangeRequest($budgetChangeRequestId)
 {
